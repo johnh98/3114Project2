@@ -14,6 +14,7 @@ public class Student implements ClassMember {
     private String lastName;
     private String studID;
     private int totGrade;
+    private String grade;
 
 
     /**
@@ -27,11 +28,12 @@ public class Student implements ClassMember {
      *            is the ID number, with 2 digits indicating section
      *            and the following 4 representing the order this was created in
      */
-    public Student(String fName, String lName, String newID) {
+    public Student(String pid, String fName, String lName, int score, String letterGrade) {
         firstName = fName;
         lastName = lName;
-        studID = newID;
-        totGrade = 0;
+        studID = pid;
+        totGrade = score;
+        grade = letterGrade;
     }
 
 
@@ -52,7 +54,7 @@ public class Student implements ClassMember {
      * @param grade
      *            is the new grade for the student
      */
-    public void setGrade(int grade) {
+    public void setScore(int grade) {
         totGrade = grade;
     }
 
@@ -63,10 +65,30 @@ public class Student implements ClassMember {
      * 
      * @return the student's grade
      */
-    public int getGrade() {
+    public int getScore() {
         return totGrade;
     }
 
+    /**
+     * Sets the students grade to a given value
+     * 
+     * @param grade
+     *            is the new grade for the student
+     */
+    public void setGrade(String letterGrade) {
+        grade = letterGrade;
+    }
+
+
+    // ----------------------------------------------
+    /**
+     * Public getter for the student's score
+     * 
+     * @return the student's grade
+     */
+    public String getGrade() {
+        return grade;
+    }
 
     /**
      * Public getter for Student ID
@@ -106,14 +128,16 @@ public class Student implements ClassMember {
      *            is the student to compare with
      * @return 0 if the names are identical,
      *         1 when compStudent < this,
-     *         -1 when this > compStudent
+     *         -1 when this < compStudent
      */
-    @Override
+    //@Override
     public int compareTo(ClassMember compStudent) {
+        /*
         int compNames = (this.lastName).compareTo(compStudent.getLastName());
         if (compNames == 0) {
             return (this.firstName).compareTo(compStudent.getFirstName());
-        }
-        return compNames;
+        }*/
+        int compID = (this.getID()).compareTo(compStudent.getID());
+        return compID;
     }
 }

@@ -30,5 +30,12 @@ public interface ClassMember extends Comparable<ClassMember> {
      * @return the last name
      */
     public String getLastName();
+    
+    /**
+     * Gets teh students ID
+     * 
+     * @return the id
+     */
+    public String getID();
 }
 
