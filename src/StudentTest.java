@@ -19,7 +19,7 @@ public class StudentTest extends TestCase {
     * Sets up the tests
     */
    public void setUp() {
-       tester = new Student("ID", "first", "last", 0, "F");
+       tester = new Student("ID", "first", "mid", "last", 0, "F");
    }
 
 
@@ -50,7 +50,7 @@ public class StudentTest extends TestCase {
        String testString = tester.toString();
        assertTrue(testString.equals("ID, first last, score = 0"));
 
-       Student test2 = new Student("0000", "John", null, 0, "B");
+       Student test2 = new Student("0000", "John", null, null, 0, "B");
        test2.setScore(50);
        String testString2 = test2.toString();
        assertTrue(testString2.equals("0000, John null, score = 50"));
@@ -61,10 +61,10 @@ public class StudentTest extends TestCase {
     * Tests the student compareTo method
     */
    public void testCompareTo() {
-       Student test1 = new Student("0002", "Bart", "Simpson", 3, "A");
-       Student test2 = new Student("0002", "Bart", "Simpson", 2, "B");
-       Student test3 = new Student("0001", "OJ", "Simpson", 1, "C");
-       Student test4 = new Student("0003", "Nikola", "Bart", 0, "D");
+       Student test1 = new Student("0002", "Bart", "b", "Simpson", 3, "A");
+       Student test2 = new Student("0002", "Bart", "b","Simpson", 2, "B");
+       Student test3 = new Student("0001", "OJ", "juice", "Simpson", 1, "C");
+       Student test4 = new Student("0003", "Nikola", "and", "Bart", 0, "D");
 
        assertEquals(0, test1.compareTo(test2));
        assertTrue(0 < test1.compareTo(test3));

@@ -11,10 +11,12 @@
 public class Student implements ClassMember {
 
     private String firstName;
+    private String middleName;
     private String lastName;
     private String studID;
     private int totGrade;
     private String grade;
+    private int section;
 
 
     /**
@@ -28,14 +30,32 @@ public class Student implements ClassMember {
      *            is the ID number, with 2 digits indicating section
      *            and the following 4 representing the order this was created in
      */
-    public Student(String pid, String fName, String lName, int score, String letterGrade) {
+    public Student(String pid, String fName, String midName, String lName, int score, String letterGrade) {
         firstName = fName;
+        middleName = midName;
         lastName = lName;
         studID = pid;
         totGrade = score;
         grade = letterGrade;
+        section = -1;
+        
     }
-
+    
+    /**
+     * Returns the section the student is in or -1 if they aren't enrolled anywhere
+     * @return the section they're in
+     */
+    public int getSection() {
+        return section;
+    }
+    
+    /**
+     * Sets the student's section
+     * @param sec
+     */
+    public void setSection(int sec) {
+        section = sec;
+    }
 
     /**
      * Creates a string of the student's ID, name, and grade
