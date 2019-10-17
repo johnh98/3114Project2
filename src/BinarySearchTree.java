@@ -70,7 +70,7 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
 
 
     /**
-     * Find an item in the tree.
+     * Find an item in the tree with repeat keys.
      *
      * @param x
      *            the item to search for.
@@ -80,7 +80,16 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
         return elementAt(find(x, y, root));
     }
 
-
+    /**
+     * Find an item in a tree with singular keys
+     * 
+     * @param x the key we are trying to find
+     * @return the matching item or null if not found
+     */
+    public V find(K x) {
+        return elementAt(find(x, root));
+    }
+    
     /**
      * Indirectly clear all elements in the tree
      * by dereferencing the root.
@@ -251,10 +260,12 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
 
     // ----------------------------------------------------------
     /**
-     * Internal method to find an item in a subtree.
+     * Internal method to find an item in a subtree where keys are repeated.
      *
      * @param x
      *            is item to search for.
+     * @param y 
+     *            value of item we're seraching for
      * @param node
      *            the node that roots the tree.
      * @return node containing the matched item.
@@ -270,6 +281,32 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
         else if (x.compareTo(node.getKey()) > 0) {
             // Search in the right subtree
             return find(x, y, node.getRight());
+        }
+        else {
+            return node; // Match
+        }
+    }
+    
+    /**
+     * Internal method to find an item in a subtree where keys aren't repeated
+     *
+     * @param x
+     *            is item to search for.
+     * @param node
+     *            the node that roots the tree.
+     * @return node containing the matched item.
+     */
+    private KeyNode<K, V> find(K x, KeyNode<K, V> node) {
+        if (node == null) {
+            return null; // Not found
+        }
+        else if (x.compareTo(node.getKey()) < 0) {
+            // Search in the left subtree
+            return find(x, node.getLeft());
+        }
+        else if (x.compareTo(node.getKey()) > 0) {
+            // Search in the right subtree
+            return find(x, node.getRight());
         }
         else {
             return node; // Match
