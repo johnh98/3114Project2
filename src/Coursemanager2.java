@@ -229,7 +229,7 @@ public class Coursemanager2 {
                         + 1) + " dump:");
                     System.out.println(allSects[currSect].dumpSection());
                     System.out.println("Size = " + Integer.toString(
-                        allSects[currSect].getSize()));
+                        allSects[currSect].getNumStudents()));
                 }
                 case ("removesection"): {
                     if (lineSpl.length > 1) {
