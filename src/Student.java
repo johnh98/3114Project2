@@ -37,7 +37,7 @@ public class Student implements ClassMember {
         studID = pid;
         totGrade = score;
         grade = letterGrade;
-        section = -1;
+        section = 0;
         
     }
     
