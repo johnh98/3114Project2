@@ -126,6 +126,15 @@ public class Coursemanager2 {
                     currSect = Integer.parseInt(lineSpl[1]) - 1;
                     System.out.println("Switch to section " + lineSpl[1]);
                 }
+                /*
+                 * JOHN,
+                 * I'M NOT SURE WHAT THE IF/ELSE IS FOR SO I WON'T TOUCH IT, BUT
+                 * THE INSERT HAS NEW SYNTAX. CHECK SECTION TO SEE HOW IT WORKS.
+                 * IF ITS A NORMAL INSERT THEN JUST SET THE GRADE AND SCORE TO F
+                 * AND 0 RESPECTIVELY
+                 * <3,
+                 * SAM UwU
+                 */
                 case ("insert"): {
                     if (lineSpl.length == 4) {
                         currStud = allSects[currSect].insert(lineSpl[1]
@@ -138,6 +147,28 @@ public class Coursemanager2 {
                             lineSpl[3].toLowerCase());
                     }
                     isStud = true;
+                }
+                /*
+                 * JOHN,
+                 * I NOTICED YOU HADN'T ADDED THIS CASE YET, SO I WENT AHEAD AND
+                 * DID SO. FEEL FREE TO CHECK HIM OVER TO MAKE SURE IT'S DOING
+                 * WHAT ITS SUPPOSED TO, BUT I THINK IT WORKS AS INTENDED.
+                 * <3,
+                 * SAM UwU
+                 */
+                case ("searchid"): {
+                    Student result = allSects[currSect].searchId(lineSpl[1]);
+                    if (result == null) {
+                        System.out.println(
+                            "Search Failed. Couldn't find any student with id "
+                                + lineSpl[1]);
+                        isStud = false;
+                    }
+                    else {
+                        System.out.println("Found " + result.toString());
+                        currStud = result;
+                        isStud = true;
+                    }
                 }
                 case ("search"): {
                     if (lineSpl.length == 2) {
@@ -164,6 +195,13 @@ public class Coursemanager2 {
                             + Integer.toString(i) + " records in section "
                             + Integer.toString(currSect + 1));
                     }
+                    /*
+                     * HEY JOHN,
+                     * THIS RETURNS AN ARRAY NOW SO YOU SHOULD FIX NOTE
+                     * THAT AND CHANGE YOUR IMPLEMENTATION ACCORDINGLY
+                     * <3,
+                     * Sam UwU
+                     */
                     else if (lineSpl.length == 3) {
                         // The student returned by search, possibly null
                         Student result = allSects[currSect].search(lineSpl[1]
@@ -204,17 +242,47 @@ public class Coursemanager2 {
                             "Scores have to be integers in range 0 to 100.");
                     }
                 }
+                /*
+                 * JOHN,
+                 * I ADDED CASE FOR WHEN ITS THE PID REMOVE (1 PARAMETER)
+                 * I BASED IT ON CODE YOU'VE PREVIOUSLY WRITTEN BUT CHECK IT OUT
+                 * IN CASE IT DOESN'T DO WHAT YOU WANT
+                 * <3,
+                 * SAM UwU
+                 */
                 case ("remove"): {
-                    allSects[currSect].remove(lineSpl[1].toLowerCase(),
-                        lineSpl[2].toLowerCase());
+                    if (lineSpl.length == 2) {
+                        allSects[currSect].remove(lineSpl[1]);
+                    }
+                    else if (lineSpl.length == 3) {
+                        allSects[currSect].remove(lineSpl[1].toLowerCase(),
+                            lineSpl[2].toLowerCase());
+                    }
                 }
+                /*
+                 * JOHN,
+                 * I ADDED THE PRINT THAT IT NEEDS TO MAKE. JUST THOUGHT I'D LET
+                 * YOU KNOW
+                 * <3,
+                 * SAM UwU
+                 */
                 case ("grade"): {
                     allSects[currSect].grade();
+                    System.out.println("grading completed");
                 }
+                /*
+                 * HEY JOHN
+                 * SAM AGAIN HERE TO LET YOU KNOW THAT I CORRECTED THE INITIAL
+                 * PRINT HERE SO IT FOLLOWS THE SPEC. JUST WANTED TO LET YOU
+                 * KNOW :)
+                 * <3,
+                 * SAM UwU
+                 */
                 case ("stat"): {
                     // Holds the grade totals of the students
                     int[] result = allSects[currSect].stat();
-                    System.out.println("grading completed:");
+                    System.out.println("Statistics of section " + currSect
+                        + ":");
                     // iterator through result
                     int j = 0;
                     while (j < result.length) {
@@ -227,12 +295,32 @@ public class Coursemanager2 {
                         j++;
                     }
                 }
+                /*
+                 * JOHN,
+                 * ME AGAIN HERE TO LET YOU KNOW THAT YOU DIDN'T NEED TO PRINT
+                 * OUT DUMPSECTION, IT ALREADY DOES THAT. I FIXED IT THOUGH :D
+                 * <3,
+                 * SAM UwU
+                 */
                 case ("dumpsection"): {
                     System.out.println("Section " + Integer.toString(currSect
                         + 1) + " dump:");
-                    System.out.println(allSects[currSect].dumpSection());
+                    allSects[currSect].dumpSection();
                     System.out.println("Size = " + Integer.toString(
                         allSects[currSect].getNumStudents()));
+                }
+                /**
+                 * JOHN,
+                 * I WASN'T SURE IF THIS IS WHAT REMOVESECTION IS SUPPOSED TO
+                 * BE, BUT I JUST WENT AHEAD AND ADDED HANDLING FOR
+                 * CLEARSECTION. FEEL FREE TO MODIFY IF THIS ISN'T WHAT IT NEEDS
+                 * TO BE/ISN'T UP TO FORMATTING
+                 * <3,
+                 * SAM UwU
+                 */
+                case ("clearsection"): {
+                    allSects[currSect].clearSection();
+                    System.out.println("Section " + currSect + " cleared");
                 }
                 case ("removesection"): {
                     if (lineSpl.length > 1) {
@@ -247,8 +335,44 @@ public class Coursemanager2 {
                             currSect + 1) + " removed");
                     }
                 }
+                /*
+                 * JOHN,
+                 * SO LIST RETURNS AN ARRAY OF STUDENT OBJECTS, AND THE I
+                 * FIGURED I COULD PRINT IT IS BY ITERATING THROUGH THE ARRAY.
+                 * PLEASE LET ME KNOW IF MY IMPLEMENTATION OF THIS HANDLING IS
+                 * NOT UP TO PAR.
+                 * <3,
+                 * SAM UwU
+                 */
+                case ("list"): {
+                    System.out.println("Students with grade " + lineSpl[1]
+                        + " are:");
+                    Student[] listed = allSects[currSect].list(lineSpl[1]);
+                    int listCount = 0;
+                    while (listed[listCount] != null) {
+                        System.out.println(listed[listCount].toString());
+                        listCount++;
+                    }
+                    System.out.println("Found " + listCount + " students");
+                }
+                /*
+                 * JOHN,
+                 * SINCE WE ADDED THIS IN FRONT OF THE TA AND YOU DON'T HAVE THE
+                 * LATEST COURSEMANAGER1, IT DIDN'T HAVE OUR HANDLING FOR
+                 * FINDPAIR. I ADDED IT THOUGH, SO WE'RE GOOD ON THIS
+                 * <3,
+                 * SAM UwU
+                 */
                 case ("findpair"): {
-                    System.out.println("Findpair does nothing right now");
+                    int difference = 0;
+                    if (lineSpl.length == 2) {
+                        difference = Integer.parseInt(lineSpl[1]);
+
+                    }
+                    System.out.println(
+                        "Students with score difference less than or equal "
+                            + Integer.toString(difference) + ":");
+                    System.out.print(allSects[currSect].findPair(difference));
                 }
             }
             if (!cmd.equals("insert") && !cmd.equals("search")) {
