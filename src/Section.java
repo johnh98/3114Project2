@@ -3,7 +3,7 @@
  * 
  */
 
-//import java.io.PrintWriter;
+// import java.io.PrintWriter;
 
 /**
  * This class represents a section of a course. It contains a binary search tree
@@ -20,11 +20,13 @@ public class Section {
     private BinarySearchTree<String, Integer> pidTree;
     private BinarySearchTree<NameGroup, Integer> nameTree;
     private BinarySearchTree<Integer, Integer> scoreTree;
-    //private int currID;
-    //private int index;
+    // private int currID;
+    // private int index;
     private int size;
+    private int numStud;
     private int nameArrSize;
-    //private int secNum;
+    private boolean merged;
+    private int secNum;
 
 
     /**
@@ -34,14 +36,35 @@ public class Section {
      *            is the section number
      */
     public Section(int section) {
-        //secNum = section;
+        secNum = section;
         studArray = new Student[200];
         pidTree = new BinarySearchTree<String, Integer>();
         nameTree = new BinarySearchTree<NameGroup, Integer>();
         scoreTree = new BinarySearchTree<Integer, Integer>();
-        //currID = (section * 10000) + 1;
+        // currID = (section * 10000) + 1;
         size = 0;
+        numStud = 0;
+        merged = false;
 
+    }
+
+
+    /**
+     * Switches the sections merged tag so it can be treated like a merged
+     * section
+     */
+    public void setMerge() {
+        merged = !merged;
+    }
+
+
+    /**
+     * Gets the number of enrolled students in a course
+     * 
+     * @return the number of students enrolled in the course
+     */
+    public int getNumStudents() {
+        return numStud;
     }
 
 
@@ -50,10 +73,10 @@ public class Section {
      * 
      * @return the ID that the next student will have
      *
-    public int getIndex() {
-        return index;
-    }*/
-
+     *         public int getIndex() {
+     *         return index;
+     *         }
+     */
 
     /**
      * Adds a student to a section. If a student is already in the BST/section,
@@ -70,44 +93,80 @@ public class Section {
      *         existing
      *         record if the student was already in the section)
      */
-    public Student insert(String pid, String first, String mid, String last, int score, String grade, int sec) {
-        
+    public Student insert(
+        String pid,
+        String first,
+        String mid,
+        String last,
+        int score,
+        String grade,
+        int sec) {
+
         /*
          * Search the PID tree to see if the student is already in the section
          */
         Integer currInd = pidTree.find(pid);
         /*
-         * If the student isnt in the section then add it in 
+         * If the student isn't in the section then add it in
          */
         if (currInd.equals(null)) {
-            //Create the student and update its section
+            // Create the student and update its section
             Student newStu = new Student(pid, first, mid, last, score, grade);
             newStu.setSection(sec);
-            //insert into teh array and trees
+            // insert into the array and trees
             studArray[size] = newStu;
             pidTree.insert(pid, size);
             NameGroup currName = new NameGroup(first, last);
             nameTree.insert(currName, size);
             scoreTree.insert(score, size);
             size++;
-            //Print success and return the student
+            numStud++;
+            // Print success and return the student
             System.out.println(first + " " + last + " inserted");
             return newStu;
-            
+
         }
         /*
          * Otherwise just return the actual student
          */
         else {
-            System.out.println(first + " " + last + " is already in section " + sec);
+            System.out.println(first + " " + last + " is already in section "
+                + sec);
             return studArray[currInd];
         }
-        
+
     }
 
 
     /**
-     * Removes a student from the section
+     * Removes a student from a section based on their pid
+     * 
+     * @param pid
+     *            the pid of the student we are removing
+     */
+    public void remove(String pid) {
+        Integer currId = pidTree.find(pid);
+        if (currId.equals(null)) {
+            System.out.println(
+                "Remove failed: couldn't find any student with id " + pid);
+        }
+        else {
+            studArray[currId].setSection(-1);
+            NameGroup removed = new NameGroup(studArray[currId].getFirstName(),
+                studArray[currId].getLastName());
+            pidTree.remove(pid, currId);
+            nameTree.remove(removed, currId);
+            scoreTree.remove(studArray[currId].getScore(), currId);
+            System.out.println("Student " + removed.getFirst() + " " + removed
+                .getLast() + " get removed from section " + secNum);
+            numStud--;
+        }
+    }
+
+
+    /**
+     * Removes a student from the section (removes no students if there are no
+     * or multiple students with the given name)
      * 
      * @param first
      *            The students first name
@@ -115,48 +174,40 @@ public class Section {
      *            The students last name
      */
     public void remove(String first, String last) {
-        /*
-         * Create new student placeholder and decrement size
-         * Try to remove student
-         * If that fails, restore size, get section number, and print error
-         * message
-         */
-        Student placeHolder = new Student(first, last, "0");
-        //size -= 1;
-        // Number of the current section
-        int sectionNum = (currID - (size + 1)) / 10000;
-        String err = "Student " + first + " " + last
-            + " get removed from section " + Integer.toString(sectionNum);
-        try {
-            students.remove(placeHolder);
+
+        Student[] finds = search(first, last);
+        if (finds[0].equals(null) || !(finds[1].equals(null))) {
+            System.out.println("Remove failed. Student " + first + " " + last
+                + " doesn't exist in section " + secNum);
         }
-        catch (ItemNotFoundException e) {
-            size += 1;
-            err = "Remove failed. Student " + first + " " + last
-                + " doesn't exist in section " + Integer.toString(sectionNum);
+        else {
+            remove(finds[0].getID());
         }
-        System.out.println(err);
 
     }
 
 
     /**
      * Completely removes all students from a section and resets the sections
-     * student
-     * ids
+     * student ids
      */
-    public void removeSection() {
-        // This method just uses the BST makeEmpty method, and resets the size
-        // and currID
-        students.makeEmpty();
-        currID = ((currID / 10000) * 10000) + 1;
+    public void clearSection() {
+        // This method just uses the BST makeEmpty method, resets the array, and
+        // resets the size and numStud
+        pidTree.makeEmpty();
+        nameTree.makeEmpty();
+        scoreTree.makeEmpty();
         size = 0;
-
+        numStud = 0;
+        studArray = new Student[200];
     }
+
 
     /**
      * Searches for a student based on a their pid
-     * @param pid the pid of the student we are looking for
+     * 
+     * @param pid
+     *            the pid of the student we are looking for
      * @return the student or NULL if they are not in the section
      */
     public Student searchId(String pid) {
@@ -168,7 +219,8 @@ public class Section {
             return studArray[currInd];
         }
     }
-    
+
+
     /**
      * Searches for all students that have a given name
      * 
@@ -177,8 +229,8 @@ public class Section {
      * @return an array of all students who have the name
      */
     public Student[] search(String name) {
-        Student[] allFinds = new Student[200];
-        if (size != 0) {
+        Student[] allFinds = new Student[size];
+        if (numStud != 0) {
             this.findNames(name, nameTree.getRoot(), allFinds);
         }
         nameArrSize = 0;
@@ -196,8 +248,8 @@ public class Section {
      * @return the student found or NULL if none
      */
     public Student[] search(String fName, String lName) {
-        Student[] allFinds = new Student[200];
-        if (size != 0) {
+        Student[] allFinds = new Student[size];
+        if (numStud != 0) {
             this.findExactNames(fName, lName, nameTree.getRoot(), allFinds);
         }
         nameArrSize = 0;
@@ -207,8 +259,6 @@ public class Section {
 
     /**
      * Prints out the contents of the section
-     * 
-     * @return a string representing the contents of the section
      */
     public void dumpSection() {
         System.out.println("BST by ID:");
@@ -228,22 +278,24 @@ public class Section {
      */
     public int[] stat() {
         int[] grades = new int[12];
-        if (size != 0) {
+        if (numStud != 0) {
             this.tallyScore(grades);
         }
         return grades;
 
     }
-    
+
+
     /**
-     * Goes through the section and grades all enrolled students (assigns a grade letter based on score)
+     * Goes through the section and grades all enrolled students (assigns a
+     * grade letter based on score)
      */
     public void grade() {
         for (int i = 0; i < size; i++) {
             if (studArray[i].getSection() != -1) {
-                
+
                 int grade = studArray[i].getScore();
-                
+
                 if (grade < 50) {
                     studArray[i].setGrade("F");
                 }
@@ -283,20 +335,25 @@ public class Section {
             }
         }
     }
-    
+
+
     /**
      * Updates the student score tree when a students score is changed
-     * @param pid the pid of the student being changed
-     * @param score the new score that we are inserting into the tree
+     * 
+     * @param pid
+     *            the pid of the student being changed
+     * @param score
+     *            the new score that we are inserting into the tree
      */
     public void updateStudentScore(String pid, Integer score) {
-       Integer currId = pidTree.find(pid);
-       if(!(currId.equals(null))){
-           Integer oldScore = studArray[currId].getScore();
-           scoreTree.remove(oldScore, currId);
-           scoreTree.insert(score, currId);
-       }
+        Integer currId = pidTree.find(pid);
+        if (!(currId.equals(null))) {
+            Integer oldScore = studArray[currId].getScore();
+            scoreTree.remove(oldScore, currId);
+            scoreTree.insert(score, currId);
+        }
     }
+
 
     /**
      * Returns the size of the section
@@ -309,9 +366,52 @@ public class Section {
 
     }
 
+
+    /**
+     * Goes through the list of students and creates an array of students who
+     * have the same grade letter, which it returns so that it can be printed
+     * 
+     * @param grade
+     *            the grade we are looking for
+     * @return an array of students who have that grade
+     */
+    public Student[] list(String grade) {
+        int listSize = 0;
+        Student[] graded = new Student[size];
+        if (grade.length() == 1) {
+            for (int i = 0; i < size; i++) {
+                if (studArray[i].getSection() != -1 && studArray[i].getGrade()
+                    .equalsIgnoreCase(grade)) {
+                    graded[listSize] = studArray[i];
+                    listSize++;
+                }
+            }
+        }
+        else if (grade.substring(1).equalsIgnoreCase("*")) {
+            for (int i = 0; i < size; i++) {
+                if (studArray[i].getSection() != -1 && studArray[i].getGrade()
+                    .substring(0, 1).equalsIgnoreCase(grade.substring(0, 1))) {
+                    graded[listSize] = studArray[i];
+                    listSize++;
+                }
+            }
+        }
+        else {
+            for (int i = 0; i < size; i++) {
+                if (studArray[i].getSection() != -1 && studArray[i].getGrade()
+                    .equalsIgnoreCase(grade)) {
+                    graded[listSize] = studArray[i];
+                    listSize++;
+                }
+            }
+        }
+        return graded;
+    }
+
+
     /**
      * This method checks for pairs within the section that are within a certain
-     * score of eachother
+     * score of each other
      * 
      * @param diff
      *            the difference we want between pair scores (maximum
@@ -326,74 +426,77 @@ public class Section {
             if (studArray[i].getSection() != -1) {
                 for (int j = i + 1; j < size; j++) {
                     if (studArray[j].getSection() != -1) {
-                        int scoreDiff = studArray[i].getScore() - studArray[j].getScore();
+                        int scoreDiff = studArray[i].getScore() - studArray[j]
+                            .getScore();
                         if ((0 - diff) <= scoreDiff && scoreDiff <= diff) {
-                            pairs = pairs + studArray[i].getFirstName() + " " + studArray[i]
-                                .getLastName() + ", " + studArray[j].getFirstName() + " "
+                            pairs = pairs + studArray[i].getFirstName() + " "
+                                + studArray[i].getLastName() + ", "
+                                + studArray[j].getFirstName() + " "
                                 + studArray[j].getLastName() + '\n';
                             numPair++;
                         }
                     }
-                }    
+                }
             }
         }
         pairs = pairs + "found " + numPair + " pairs\n";
         return pairs;
     }
 
-    
+
     /**
      * This method is a recursive method that assists in finding out how many
-     * students in a section have which grade. This is achieved by going through the array of students, ignoring students
-     * no longer in the section, and taking note of their score
+     * students in a section have which grade. This is achieved by going through
+     * the array of students, ignoring students no longer in the section, and
+     * taking note of their score
      * 
      * @param grader
      *            the array holding the quantities for each grade
      */
     private void tallyScore(int[] grader) {
-       for (int i = 0; i < size; i++) {
-           if (studArray[i].getSection() != -1) {
-               
-               int grade = studArray[i].getScore();
-               
-               if (grade < 50) {
-                   grader[11] += 1;
-               }
-               else if (grade < 53) {
-                   grader[10] += 1;
-               }
-               else if (grade < 55) {
-                   grader[9] += 1;
-               }
-               else if (grade < 58) {
-                   grader[8] += 1;
-               }
-               else if (grade < 60) {
-                   grader[7] += 1;
-               }
-               else if (grade < 65) {
-                   grader[6] += 1;
-               }
-               else if (grade < 70) {
-                   grader[5] += 1;
-               }
-               else if (grade < 75) {
-                   grader[4] += 1;
-               }
-               else if (grade < 80) {
-                   grader[3] += 1;
-               }
-               else if (grade < 85) {
-                   grader[2] += 1;
-               }
-               else if (grade < 90) {
-                   grader[1] += 1;
-               }
-               else if (grade <= 100) {
-                   grader[0] += 1;
-               }
-           }
-       }
+        for (int i = 0; i < size; i++) {
+            if (studArray[i].getSection() != -1) {
+
+                int grade = studArray[i].getScore();
+
+                if (grade < 50) {
+                    grader[11] += 1;
+                }
+                else if (grade < 53) {
+                    grader[10] += 1;
+                }
+                else if (grade < 55) {
+                    grader[9] += 1;
+                }
+                else if (grade < 58) {
+                    grader[8] += 1;
+                }
+                else if (grade < 60) {
+                    grader[7] += 1;
+                }
+                else if (grade < 65) {
+                    grader[6] += 1;
+                }
+                else if (grade < 70) {
+                    grader[5] += 1;
+                }
+                else if (grade < 75) {
+                    grader[4] += 1;
+                }
+                else if (grade < 80) {
+                    grader[3] += 1;
+                }
+                else if (grade < 85) {
+                    grader[2] += 1;
+                }
+                else if (grade < 90) {
+                    grader[1] += 1;
+                }
+                else if (grade <= 100) {
+                    grader[0] += 1;
+                }
+            }
+        }
     }
 
 
@@ -418,8 +521,8 @@ public class Section {
         // Checks if the current node even exists, then checks if either of its
         // student's names match the given name. if they do, add them to the
         // array
-        if (node != null && (node.getKey().getFirst().equalsIgnoreCase(
-            name) || node.getKey().getLast().equalsIgnoreCase(name))) {
+        if (node != null && (node.getKey().getFirst().equalsIgnoreCase(name)
+            || node.getKey().getLast().equalsIgnoreCase(name))) {
             sameNames[nameArrSize] = studArray[node.getValue()];
             nameArrSize++;
         }
@@ -428,9 +531,11 @@ public class Section {
             this.findNames(name, node.getRight(), sameNames);
         }
     }
-    
+
+
     /**
-     * Finds all instances of a first and last name in a section and adds them to an array
+     * Finds all instances of a first and last name in a section and adds them
+     * to an array
      * 
      * @param first
      *            the first name we are looking for
@@ -442,7 +547,8 @@ public class Section {
      *            the array of students who have the exact
      */
     private void findExactNames(
-        String first, String last,
+        String first,
+        String last,
         KeyNode<NameGroup, Integer> node,
         Student[] sameNames) {
         // If the left node/subtree exists, we check that out
@@ -452,8 +558,8 @@ public class Section {
         // Checks if the current node even exists, then checks if either its
         // student's names match the given name. if they do, add them to the
         // array
-        if (node != null && (node.getKey().getFirst().equalsIgnoreCase(
-            first) && node.getKey().getLast().equalsIgnoreCase(last))) {
+        if (node != null && (node.getKey().getFirst().equalsIgnoreCase(first)
+            && node.getKey().getLast().equalsIgnoreCase(last))) {
             sameNames[nameArrSize] = studArray[node.getValue()];
             nameArrSize++;
         }
@@ -462,11 +568,15 @@ public class Section {
             this.findExactNames(first, last, node.getRight(), sameNames);
         }
     }
-    
+
+
     /**
      * Recurses through the PID tree and prints the students held within
+     * 
+     * @param node
+     *            the node we are currently looking at
      */
-    public void printPIDTree(KeyNode<String, Integer> node) {
+    private void printPIDTree(KeyNode<String, Integer> node) {
         // If the left node/subtree exists, we check that out
         if (node.getLeft() != null) {
             this.printPIDTree(node.getLeft());
@@ -478,11 +588,15 @@ public class Section {
             this.printPIDTree(node.getRight());
         }
     }
-    
+
+
     /**
      * Recurses through the PID tree and prints the students held within
+     * 
+     * @param node
+     *            the node we are currently looking at
      */
-    public void printNameTree(KeyNode<NameGroup, Integer> node) {
+    private void printNameTree(KeyNode<NameGroup, Integer> node) {
         // If the left node/subtree exists, we check that out
         if (node.getLeft() != null) {
             this.printNameTree(node.getLeft());
@@ -494,10 +608,15 @@ public class Section {
             this.printNameTree(node.getRight());
         }
     }
+
+
     /**
      * Recurses through the PID tree and prints the students held within
+     * 
+     * @param node
+     *            the node we are currently looking at
      */
-    public void printScoreTree(KeyNode<Integer, Integer> node) {
+    private void printScoreTree(KeyNode<Integer, Integer> node) {
         // If the left node/subtree exists, we check that out
         if (node.getLeft() != null) {
             this.printScoreTree(node.getLeft());

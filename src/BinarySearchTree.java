@@ -1,4 +1,4 @@
- /**
+/**
  * This class represents a generic BST. It holds data and can be traversed.
  * This class also contains methods that allow for the BST to be modified
  * 
@@ -8,7 +8,7 @@
  *
  * @param <K>
  *            generic type representing the key value
- * @param <V> 
+ * @param <V>
  *            generic type representing the value held by the tree
  */
 public class BinarySearchTree<K extends Comparable<? super K>, V extends Comparable<? super V>> {
@@ -80,16 +80,19 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
         return elementAt(find(x, y, root));
     }
 
+
     /**
      * Find an item in a tree with singular keys
      * 
-     * @param x the key we are trying to find
+     * @param x
+     *            the key we are trying to find
      * @return the matching item or null if not found
      */
     public V find(K x) {
         return elementAt(find(x, root));
     }
-    
+
+
     /**
      * Indirectly clear all elements in the tree
      * by dereferencing the root.
@@ -149,7 +152,8 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
         if (node == null) {
             return new KeyNode<K, V>(x, y);
         }
-        else if (x.compareTo(node.getKey()) < 0 || (x.compareTo(node.getKey()) == 0 && y.compareTo(node.getValue()) != 0)) {
+        else if (x.compareTo(node.getKey()) < 0 || (x.compareTo(node
+            .getKey()) == 0 && y.compareTo(node.getValue()) != 0)) {
             node.setLeft(insert(x, y, node.getLeft()));
         }
         else if (x.compareTo(node.getKey()) > 0) {
@@ -185,7 +189,8 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
         }
 
         // if value should be to the left of the root
-        if (x.compareTo(node.getKey()) < 0 || (x.compareTo(node.getKey()) == 0 && y.compareTo(node.getValue()) != 0)) {
+        if (x.compareTo(node.getKey()) < 0 || (x.compareTo(node.getKey()) == 0
+            && y.compareTo(node.getValue()) != 0)) {
             node.setLeft(remove(x, y, node.getLeft()));
         }
         // if value should be to the right of the root
@@ -199,7 +204,8 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
                 // A temporary node to hold the values that need to get moved
                 KeyNode<K, V> temp = findMin(node.getRight());
                 node.setValue(temp.getValue());
-                node.setRight(remove(temp.getKey(), temp.getValue(), node.getRight()));
+                node.setRight(remove(temp.getKey(), temp.getValue(), node
+                    .getRight()));
             }
             // If there is only one child on the left
             else if (node.getLeft() != null) {
@@ -264,7 +270,7 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
      *
      * @param x
      *            is item to search for.
-     * @param y 
+     * @param y
      *            value of item we're seraching for
      * @param node
      *            the node that roots the tree.
@@ -274,7 +280,8 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
         if (node == null) {
             return null; // Not found
         }
-        else if (x.compareTo(node.getKey()) < 0 || (x.compareTo(node.getKey()) == 0 && y.compareTo(node.getValue()) != 0)) {
+        else if (x.compareTo(node.getKey()) < 0 || (x.compareTo(node
+            .getKey()) == 0 && y.compareTo(node.getValue()) != 0)) {
             // Search in the left subtree
             return find(x, y, node.getLeft());
         }
@@ -286,7 +293,8 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
             return node; // Match
         }
     }
-    
+
+
     /**
      * Internal method to find an item in a subtree where keys aren't repeated
      *

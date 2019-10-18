@@ -10,8 +10,9 @@
  * 
  * @param <K>
  *            The key being held in the node
- *         
- *         @param <V> the value being held in the node 
+ * 
+ * @param <V>
+ *            the value being held in the node
  */
 public class KeyNode<K, V> {
     private K key;
@@ -26,7 +27,7 @@ public class KeyNode<K, V> {
      * @param valueValue
      *            the type-less value to store in this node.
      * @param keyValue
-     *              The type-less value stored in the key
+     *            The type-less value stored in the key
      */
     KeyNode(K keyValue, V valueValue) {
         value = valueValue;
@@ -45,13 +46,16 @@ public class KeyNode<K, V> {
         return value;
     }
 
+
     /**
      * Get the current value of the key in this node
+     * 
      * @return
      */
     public K getKey() {
         return key;
     }
+
 
     /**
      * Set the data value stored in this node.
@@ -63,14 +67,17 @@ public class KeyNode<K, V> {
         value = newValue;
     }
 
+
     /**
      * Set the value of the key stored in thsi node
+     * 
      * @param newKey
-     *           The new key being stored
+     *            The new key being stored
      */
     public void setKey(K newKey) {
         key = newKey;
     }
+
 
     /**
      * Get the left child of this node.
