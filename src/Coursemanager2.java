@@ -209,8 +209,11 @@ public class Coursemanager2 {
                         lineSpl[2].toLowerCase());
                 }
                 case ("grade"): {
+                    allSects[currSect].grade();
+                }
+                case ("stat"): {
                     // Holds the grade totals of the students
-                    int[] result = allSects[currSect].grade();
+                    int[] result = allSects[currSect].stat();
                     System.out.println("grading completed:");
                     // iterator through result
                     int j = 0;
