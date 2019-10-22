@@ -426,11 +426,10 @@ public class Coursemanager2 {
         //TODO binary parsing
         InputStream binCourseFile = new FileInputStream(fileName);
         
-        String[] 
+        String[] dataString = new String[]
         int byteRead;
         
         while ((byteRead = binCourseFile.read()) != -1) {
-            outputStream.write(byteRead);
             int charCode = Integer.parseInt(info, 2);
             ((char)charCode).toString();
         }
