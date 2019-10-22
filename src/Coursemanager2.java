@@ -82,7 +82,8 @@ public class Coursemanager2 {
      * 
      * @param args
      *            are the target input file
-     * @throws IOException when reading/writing binary files with errors
+     * @throws IOException
+     *             when reading/writing binary files with errors
      */
     public static void main(String[] args) throws IOException {
         declareSections();
@@ -106,13 +107,13 @@ public class Coursemanager2 {
             // Removes the whitespace and makes an array of substrings
             String[] lineSpl = line.trim().split("\\s+");
             String cmd = lineSpl[0].toLowerCase();
-            String cmdPre = cmd.substring(0,4);
+            String cmdPre = cmd.substring(0, 4);
             if (!cmdPre.equals("load") && !cmdPre.equals("save")) {
                 for (int i = 0; i < lineSpl.length; i++) {
                     lineSpl[i] = lineSpl[i].toLowerCase();
                 }
             }
-            //Turns the initial command into an enum to switch on
+            // Turns the initial command into an enum to switch on
             Command command = Command.setCommand(cmd);
             switch (command) {
                 case loadstudentdata: {
@@ -143,9 +144,10 @@ public class Coursemanager2 {
                     System.out.println("Switch to section " + lineSpl[1]);
                 }
                 case insert: {
-                  //Prevents the command being run on a merged section
+                    // Prevents the command being run on a merged section
                     if (allSects[currSect].isMerged()) {
-                        System.out.println("Command insert is not valid for merged sections");
+                        System.out.println(
+                            "Command insert is not valid for merged sections");
                         break;
                     }
                     String fName = "";
@@ -174,9 +176,10 @@ public class Coursemanager2 {
                     isStud = true;
                 }
                 case searchid: {
-                  //Prevents the command being run on a merged section
+                    // Prevents the command being run on a merged section
                     if (allSects[currSect].isMerged()) {
-                        System.out.println("Command searchid is not valid for merged sections");
+                        System.out.println(
+                            "Command searchid is not valid for merged sections");
                         break;
                     }
                     Student result = allSects[currSect].searchId(lineSpl[1]);
@@ -193,12 +196,13 @@ public class Coursemanager2 {
                     }
                 }
                 case search: {
-                    //Prevents the command being run on a merged section
+                    // Prevents the command being run on a merged section
                     if (allSects[currSect].isMerged()) {
-                        System.out.println("Command search is not valid for merged sections");
+                        System.out.println(
+                            "Command search is not valid for merged sections");
                         break;
                     }
-                    
+
                     if (lineSpl.length == 2) {
                         // The set of students returned from search, possibly
                         // empty
@@ -265,9 +269,10 @@ public class Coursemanager2 {
                     }
                 }
                 case remove: {
-                  //Prevents the command being run on a merged section
+                    // Prevents the command being run on a merged section
                     if (allSects[currSect].isMerged()) {
-                        System.out.println("Command remove is not valid for merged sections");
+                        System.out.println(
+                            "Command remove is not valid for merged sections");
                         break;
                     }
                     if (lineSpl.length == 2) {
@@ -278,9 +283,10 @@ public class Coursemanager2 {
                     }
                 }
                 case grade: {
-                  //Prevents the command being run on a merged section
+                    // Prevents the command being run on a merged section
                     if (allSects[currSect].isMerged()) {
-                        System.out.println("Command grade is not valid for merged sections");
+                        System.out.println(
+                            "Command grade is not valid for merged sections");
                         break;
                     }
                     allSects[currSect].grade();
@@ -337,27 +343,26 @@ public class Coursemanager2 {
                     System.out.print(allSects[currSect].findPair(difference));
                 }
                 case merge: {
-                    int totLeng = 0;
-                    int mergeSectNum = -1;
-                    //Gets the total size needed for the merged section as well as what section to merge to.
-                    for (int i = 0; i < allSects.length; i++) {
-                        totLeng = totLeng + allSects[i].getNumStudents();
-                        if (mergeSectNum == -1 && allSects[i].getNumStudents() == 0) {
-                            mergeSectNum = i;
-                        }
+                    if (allSects[currSect].getNumStudents() != 0) {
+                        System.out.println(
+                            "Sections could only be merged to an  empty section. section "
+                                + Integer.toString(currSect + 1)
+                                + " is not empty");
                     }
-                    allSects[mergeSectNum].setMerge(true);
-                    allSects[mergeSectNum].setUpMerge(totLeng);
-                    
+                    else {
+                        mergeAll();
+                        System.out.println("All sections merged at section "
+                            + Integer.toString(currSect + 1));
+                    }
                 }
                 case savestudentdata: {
-                    
+
                 }
                 case savecoursedata: {
-                    
+
                 }
                 case clearcoursedata: {
-                    
+
                 }
                 default:
                     break;
@@ -367,6 +372,46 @@ public class Coursemanager2 {
             }
         }
         file.close();
+    }
+
+
+    // TODO header
+    private static void mergeAll() {
+        int totLeng = 0;
+        // Gets the total size needed for the merged section
+        for (int i = 0; i < allSects.length; i++) {
+            totLeng = totLeng + allSects[i].getNumStudents();
+        }
+        // Sets the sections "merged" tag to true
+        allSects[currSect].setMerge(true);
+        // Enlarges the section to fit all the data from the others
+        allSects[currSect].setUpMerge(totLeng);
+
+        for (int tgtSect = 0; tgtSect < allSects.length; tgtSect++) {
+            if (tgtSect != currSect && allSects[tgtSect]
+                .getNumStudents() != 0) {
+                mergeIn(tgtSect);
+            }
+        }
+    }
+
+
+    /**
+     * A helper method that inserts all students from a given section into the current section
+     * Uses list by grade as it is an available way to safely access all students in a section
+     * Creates a deep copy so that changes to the main sections do not affect the merged one
+     * @param tgtSect is the section to pull data from
+     */
+    private static void mergeIn(int tgtSect) {
+        for (int gd = 0; gd < gradeNames.length; gd++) {
+            Student[] studGroup = allSects[tgtSect].list(gradeNames[gd]);
+            for (int i = 0; i < studGroup.length; i++) {
+                allSects[currSect].insert(studGroup[i].getID(), studGroup[i]
+                    .getFirstName(), studGroup[i].getMiddleName(), studGroup[i]
+                        .getLastName(), studGroup[i].getScore(), studGroup[i]
+                            .getGrade(), studGroup[i].getSection());
+            }
+        }
     }
 
 

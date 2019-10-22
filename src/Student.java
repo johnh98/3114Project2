@@ -142,6 +142,14 @@ public class Student implements ClassMember {
     public String getFirstName() {
         return firstName;
     }
+    
+    /**
+     * Returns the student's middle name
+     * @return the middle name of this student as a string
+     */
+    public String getMiddleName() {
+        return middleName;
+    }
 
 
     /**
