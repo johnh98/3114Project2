@@ -11,55 +11,158 @@
  *
  */
 public class StudentManager {
+    /**
+     * The tree that holds the students
+     */
     private BinarySearchTree<String, Student> students;
 
 
+    /**
+     * Sets up a student manager by creating the binary tree
+     */
     public StudentManager() {
-        
+
         students = new BinarySearchTree<String, Student>();
 
     }
 
 
+    /**
+     * This method inserts into the student manager class
+     * 
+     * @param pid
+     *            the student's pid
+     * @param first
+     *            the students first name
+     * @param mid
+     *            the students middle name
+     * @param last
+     *            the students last name
+     */
     public void insert(String pid, String first, String mid, String last) {
 
-        Student newStu = new Student(pid, first, last, mid, 0, "f");
+        Student newStu = new Student(pid, first, mid, last, 0, "F");
         students.insert(pid, newStu);
 
     }
-    
-    public void updateScore( String pid, int score) {
-        
+
+
+    /**
+     * Updates a student in the managers score
+     * 
+     * @param pid
+     *            the pid of the student we are trying to update
+     * @param score
+     *            the score we are updating to
+     */
+    public void updateScore(String pid, int score) {
+
         Student updated = students.find(pid);
-        if (!(updated.equals(null))) {
+        if (!(updated == null)) {
             updated.setScore(score);
+
+            if (score < 50) {
+                updated.setGrade("F");
+            }
+            else if (score < 53) {
+                updated.setGrade("D-");
+            }
+            else if (score < 55) {
+                updated.setGrade("D");
+            }
+            else if (score < 58) {
+                updated.setGrade("D+");
+            }
+            else if (score < 60) {
+                updated.setGrade("C-");
+            }
+            else if (score < 65) {
+                updated.setGrade("C");
+            }
+            else if (score < 70) {
+                updated.setGrade("C+");
+            }
+            else if (score < 75) {
+                updated.setGrade("B-");
+            }
+            else if (score < 80) {
+                updated.setGrade("B");
+            }
+            else if (score < 85) {
+                updated.setGrade("B+");
+            }
+            else if (score < 90) {
+                updated.setGrade("A-");
+            }
+            else if (score <= 100) {
+                updated.setGrade("A");
+            }
         }
-        
+
     }
-    
+
+
+    /**
+     * Updates a student's section in the manager
+     * 
+     * @param pid
+     *            the student's pid
+     * @param section
+     *            the new section
+     */
     public void updateSection(String pid, int section) {
         Student updated = students.find(pid);
-        if (!(updated.equals(null))) {
+        if (!(updated == null)) {
             updated.setSection(section);
         }
     }
-    
+
+
+    /**
+     * This method checks to ensure that a student is allowed to be modified by
+     * checking if the student is in the student manager, and whether a
+     * hypothetical student in the manager has the same first and last name as
+     * the given student
+     * 
+     * @param pid
+     *            the given student's pid
+     * @param first
+     *            the given students first name
+     * @param last
+     *            the given students last name
+     * @return 1 if the student isn't in the student manager (pid isn't there),
+     *         2 if the pid is there but names dont match, 0 if the student is
+     *         correct
+     */
     public int checkIdentity(String pid, String first, String last) {
         Student matcher = students.find(pid);
-        //If the pid doesn't exist return 1
-        if(matcher.equals(null)) {
+        // If the pid doesn't exist return 1
+        if (matcher == null) {
             return 1;
         }
-        //If it does but the names don't match, print 2
-        else if (!(matcher.getFirstName().equals(first) && matcher.getLastName().equals(last))) {
+        // If it does but the names don't match, print 2
+        else if (!(matcher.getFirstName().equals(first) && matcher.getLastName()
+            .equals(last))) {
             return 2;
         }
-        //If it checks out, print 0
+        // If it checks out, print 0
         else {
             return 0;
         }
     }
-    
-    
+
+
+    /**
+     * This method allows for students to be found in the student manager
+     * 
+     * @param pid
+     *            the pid of the student in the student manager
+     * @return the student found in the student manager (null if such a student
+     *         doesn't exist)
+     */
+    public Student searchStu(String pid) {
+        Student found = students.find(pid);
+        return found;
+    }
 
 }

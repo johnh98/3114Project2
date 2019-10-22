@@ -48,6 +48,15 @@ public class Section {
 
     }
 
+    /**
+     * This method resizes the student array in cases where a merge would result in out of bounds
+     * @param size the combined size of all component sections
+     */
+    public void setUpMerge(int size) {
+        if (merged) {
+            studArray = new Student[size];
+        }
+    }
 
     /**
      * Switches the sections merged tag so it can be treated like a merged
@@ -71,13 +80,24 @@ public class Section {
     /**
      * Adds a student to a section. If a student is already in the BST/section,
      * then
-     * it calls an exception. On successful insertion it generates a new id.
+     * it calls an exception.
      * 
+     * @param pid
+     *            the pid of the student we are inserting
      * @param first
      *            the students first name
+     * @param mid
+     *            The middle name of the student
      * 
      * @param last
      *            the students last name
+     * @param score
+     *            The student's score
+     * @param grade
+     *            The student's grade in the class
+     * 
+     * @param sec
+     *            the student's section
      * 
      * @return the student record that was just created (or the students
      *         existing
@@ -99,7 +119,7 @@ public class Section {
         /*
          * If the student isn't in the section then add it in
          */
-        if (currInd.equals(null)) {
+        if (currInd == null) {
             // Create the student and update its section
             Student newStu = new Student(pid, first, mid, last, score, grade);
             newStu.setSection(sec);
@@ -136,7 +156,7 @@ public class Section {
      */
     public void remove(String pid) {
         Integer currId = pidTree.find(pid);
-        if (currId.equals(null)) {
+        if (currId == null) {
             System.out.println(
                 "Remove failed: couldn't find any student with id " + pid);
         }
@@ -202,7 +222,7 @@ public class Section {
      */
     public Student searchId(String pid) {
         Integer currInd = pidTree.find(pid);
-        if (currInd.equals(null)) {
+        if (currInd == null) {
             return null;
         }
         else {
@@ -337,10 +357,11 @@ public class Section {
      */
     public void updateStudentScore(String pid, Integer score) {
         Integer currId = pidTree.find(pid);
-        if (!(currId.equals(null))) {
+        if (!(currId == null)) {
             Integer oldScore = studArray[currId].getScore();
             scoreTree.remove(oldScore, currId);
             scoreTree.insert(score, currId);
+
         }
     }
 
