@@ -69,16 +69,6 @@ public class Section {
 
 
     /**
-     * Gets the current ID that will be assigned to a student
-     * 
-     * @return the ID that the next student will have
-     *
-     *         public int getIndex() {
-     *         return index;
-     *         }
-     */
-
-    /**
      * Adds a student to a section. If a student is already in the BST/section,
      * then
      * it calls an exception. On successful insertion it generates a new id.
