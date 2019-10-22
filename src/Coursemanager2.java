@@ -1,5 +1,8 @@
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Scanner;
 
 // On my honor:
@@ -66,6 +69,10 @@ public class Coursemanager2 {
     private static boolean isStud;
     // Holds string representations of grade values
     private static String[] gradeNames;
+    // Records if there is student data loaded
+    private static boolean isStudData;
+    // The student manager that holds enrollment data
+    private static StudentManager studManager;
 
 
     /**
@@ -75,10 +82,9 @@ public class Coursemanager2 {
      * 
      * @param args
      *            are the target input file
-     * @throws FileNotFoundException
-     *             with no command file
+     * @throws IOException when reading/writing binary files with errors
      */
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException {
         declareSections();
         // name of the command file to read from, not assigned immediately for
         // safety
@@ -99,10 +105,17 @@ public class Coursemanager2 {
             String line = file.nextLine();
             // Removes the whitespace and makes an array of substrings
             String[] lineSpl = line.trim().split("\\s+");
-            // The first string, the command to execute
             String cmd = lineSpl[0].toLowerCase();
-            switch (cmd) {
-                case ("loadstudentdata"): {
+            String cmdPre = cmd.substring(0,4);
+            if (!cmdPre.equals("load") && !cmdPre.equals("save")) {
+                for (int i = 0; i < lineSpl.length; i++) {
+                    lineSpl[i] = lineSpl[i].toLowerCase();
+                }
+            }
+            //Turns the initial command into an enum to switch on
+            Command command = Command.setCommand(cmd);
+            switch (command) {
+                case loadstudentdata: {
                     String fileExt = lineSpl[1].substring(lineSpl[1].length()
                         - 4, lineSpl[1].length());
                     if (fileExt.equals(".csv")) {
@@ -112,51 +125,60 @@ public class Coursemanager2 {
                         parseStudentBin(lineSpl[1]);
                     }
                 }
-                case ("loadcoursedata"): {
+                case loadcoursedata: {
                     String fileExt = lineSpl[1].substring(lineSpl[1].length()
                         - 4, lineSpl[1].length());
-                    if (fileExt.equals(".csv")) {
+                    if (fileExt.equals(".csv") && isStudData) {
                         parseCourseText(lineSpl[1]);
                     }
-                    if (fileExt.equals("data")) {
+                    else if (fileExt.equals("data") && isStudData) {
                         parseCourseBin(lineSpl[1]);
                     }
+                    else {
+                        System.out.println("No valid student data loaded");
+                    }
                 }
-                case ("section"): {
+                case section: {
                     currSect = Integer.parseInt(lineSpl[1]) - 1;
                     System.out.println("Switch to section " + lineSpl[1]);
                 }
-                /*
-                 * JOHN,
-                 * I'M NOT SURE WHAT THE IF/ELSE IS FOR SO I WON'T TOUCH IT, BUT
-                 * THE INSERT HAS NEW SYNTAX. CHECK SECTION TO SEE HOW IT WORKS.
-                 * IF ITS A NORMAL INSERT THEN JUST SET THE GRADE AND SCORE TO F
-                 * AND 0 RESPECTIVELY
-                 * <3,
-                 * SAM UwU
-                 */
-                case ("insert"): {
-                    if (lineSpl.length == 4) {
-                        currStud = allSects[currSect].insert(lineSpl[1]
-                            .toLowerCase(), lineSpl[2].toLowerCase(), lineSpl[3]
-                                .toLowerCase(), lineSpl[4].toLowerCase());
+                case insert: {
+                  //Prevents the command being run on a merged section
+                    if (allSects[currSect].isMerged()) {
+                        System.out.println("Command insert is not valid for merged sections");
+                        break;
+                    }
+                    String fName = "";
+                    String mName = "";
+                    String lName = "";
+                    String perID = "";
+                    String grade = "F";
+                    int score = 0;
+                    if (lineSpl.length % 2 == 0) {
+                        fName = lineSpl[2];
+                        mName = lineSpl[3];
+                        lName = lineSpl[4];
+                        perID = lineSpl[1];
                     }
                     else {
-                        currStud = allSects[currSect].insert(lineSpl[1]
-                            .toLowerCase(), lineSpl[2].toLowerCase(), "",
-                            lineSpl[3].toLowerCase());
+                        perID = lineSpl[1];
+                        fName = lineSpl[2];
+                        lName = lineSpl[3];
                     }
+                    if (lineSpl.length > 4) {
+                        grade = lineSpl[lineSpl.length - 1];
+                        score = Integer.parseInt(lineSpl[lineSpl.length - 2]);
+                    }
+                    currStud = allSects[currSect].insert(perID, fName, mName,
+                        lName, score, grade, currSect + 1);
                     isStud = true;
                 }
-                /*
-                 * JOHN,
-                 * I NOTICED YOU HADN'T ADDED THIS CASE YET, SO I WENT AHEAD AND
-                 * DID SO. FEEL FREE TO CHECK HIM OVER TO MAKE SURE IT'S DOING
-                 * WHAT ITS SUPPOSED TO, BUT I THINK IT WORKS AS INTENDED.
-                 * <3,
-                 * SAM UwU
-                 */
-                case ("searchid"): {
+                case searchid: {
+                  //Prevents the command being run on a merged section
+                    if (allSects[currSect].isMerged()) {
+                        System.out.println("Command searchid is not valid for merged sections");
+                        break;
+                    }
                     Student result = allSects[currSect].searchId(lineSpl[1]);
                     if (result == null) {
                         System.out.println(
@@ -170,12 +192,18 @@ public class Coursemanager2 {
                         isStud = true;
                     }
                 }
-                case ("search"): {
+                case search: {
+                    //Prevents the command being run on a merged section
+                    if (allSects[currSect].isMerged()) {
+                        System.out.println("Command search is not valid for merged sections");
+                        break;
+                    }
+                    
                     if (lineSpl.length == 2) {
                         // The set of students returned from search, possibly
                         // empty
-                        Student[] results = allSects[currSect].search(lineSpl[1]
-                            .toLowerCase());
+                        Student[] results = allSects[currSect].search(
+                            lineSpl[1]);
                         System.out.println("search results for " + lineSpl[1]
                             + ":");
                         if (results[1] == null) {
@@ -195,32 +223,26 @@ public class Coursemanager2 {
                             + Integer.toString(i) + " records in section "
                             + Integer.toString(currSect + 1));
                     }
-                    /*
-                     * HEY JOHN,
-                     * THIS RETURNS AN ARRAY NOW SO YOU SHOULD FIX NOTE
-                     * THAT AND CHANGE YOUR IMPLEMENTATION ACCORDINGLY
-                     * <3,
-                     * Sam UwU
-                     */
                     else if (lineSpl.length == 3) {
-                        // The student returned by search, possibly null
-                        Student result = allSects[currSect].search(lineSpl[1]
+                        // The students returned by search, possibly null
+                        Student[] result = allSects[currSect].search(lineSpl[1]
                             .toLowerCase(), lineSpl[2].toLowerCase());
-                        if (result == null) {
-                            System.out.println("Search failed. Student "
-                                + lineSpl[1] + " " + lineSpl[2]
-                                + " doesn't exist " + "in section " + Integer
-                                    .toString(currSect + 1));
-                            isStud = false;
+                        System.out.println("Search results for " + lineSpl[1]
+                            + " " + lineSpl[2] + ":");
+                        int j = 0;
+                        while (j < result.length && result[j] != null) {
+                            System.out.println(result[j].toString());
                         }
-                        else {
-                            System.out.println("Found " + result.toString());
-                            currStud = result;
+                        if (j > 0) {
                             isStud = true;
                         }
+                        System.out.println(lineSpl[1] + " " + lineSpl[2]
+                            + " was found in " + Integer.toString(j)
+                            + " records in section " + Integer.toString(currSect
+                                + 1));
                     }
                 }
-                case ("score"): {
+                case score: {
                     // The new score to be assigned
                     int newScore = Integer.parseInt(lineSpl[1]);
                     if (!isStud) {
@@ -242,43 +264,29 @@ public class Coursemanager2 {
                             "Scores have to be integers in range 0 to 100.");
                     }
                 }
-                /*
-                 * JOHN,
-                 * I ADDED CASE FOR WHEN ITS THE PID REMOVE (1 PARAMETER)
-                 * I BASED IT ON CODE YOU'VE PREVIOUSLY WRITTEN BUT CHECK IT OUT
-                 * IN CASE IT DOESN'T DO WHAT YOU WANT
-                 * <3,
-                 * SAM UwU
-                 */
-                case ("remove"): {
+                case remove: {
+                  //Prevents the command being run on a merged section
+                    if (allSects[currSect].isMerged()) {
+                        System.out.println("Command remove is not valid for merged sections");
+                        break;
+                    }
                     if (lineSpl.length == 2) {
                         allSects[currSect].remove(lineSpl[1]);
                     }
                     else if (lineSpl.length == 3) {
-                        allSects[currSect].remove(lineSpl[1].toLowerCase(),
-                            lineSpl[2].toLowerCase());
+                        allSects[currSect].remove(lineSpl[1], lineSpl[2]);
                     }
                 }
-                /*
-                 * JOHN,
-                 * I ADDED THE PRINT THAT IT NEEDS TO MAKE. JUST THOUGHT I'D LET
-                 * YOU KNOW
-                 * <3,
-                 * SAM UwU
-                 */
-                case ("grade"): {
+                case grade: {
+                  //Prevents the command being run on a merged section
+                    if (allSects[currSect].isMerged()) {
+                        System.out.println("Command grade is not valid for merged sections");
+                        break;
+                    }
                     allSects[currSect].grade();
                     System.out.println("grading completed");
                 }
-                /*
-                 * HEY JOHN
-                 * SAM AGAIN HERE TO LET YOU KNOW THAT I CORRECTED THE INITIAL
-                 * PRINT HERE SO IT FOLLOWS THE SPEC. JUST WANTED TO LET YOU
-                 * KNOW :)
-                 * <3,
-                 * SAM UwU
-                 */
-                case ("stat"): {
+                case stat: {
                     // Holds the grade totals of the students
                     int[] result = allSects[currSect].stat();
                     System.out.println("Statistics of section " + currSect
@@ -295,56 +303,18 @@ public class Coursemanager2 {
                         j++;
                     }
                 }
-                /*
-                 * JOHN,
-                 * ME AGAIN HERE TO LET YOU KNOW THAT YOU DIDN'T NEED TO PRINT
-                 * OUT DUMPSECTION, IT ALREADY DOES THAT. I FIXED IT THOUGH :D
-                 * <3,
-                 * SAM UwU
-                 */
-                case ("dumpsection"): {
+                case dumpsection: {
                     System.out.println("Section " + Integer.toString(currSect
                         + 1) + " dump:");
                     allSects[currSect].dumpSection();
                     System.out.println("Size = " + Integer.toString(
                         allSects[currSect].getNumStudents()));
                 }
-                /**
-                 * JOHN,
-                 * I WASN'T SURE IF THIS IS WHAT REMOVESECTION IS SUPPOSED TO
-                 * BE, BUT I JUST WENT AHEAD AND ADDED HANDLING FOR
-                 * CLEARSECTION. FEEL FREE TO MODIFY IF THIS ISN'T WHAT IT NEEDS
-                 * TO BE/ISN'T UP TO FORMATTING
-                 * <3,
-                 * SAM UwU
-                 */
-                case ("clearsection"): {
+                case clearsection: {
                     allSects[currSect].clearSection();
                     System.out.println("Section " + currSect + " cleared");
                 }
-                case ("removesection"): {
-                    if (lineSpl.length > 1) {
-                        allSects[Integer.parseInt(lineSpl[1]) - 1]
-                            .removeSection();
-                        System.out.println("Section " + lineSpl[1]
-                            + " removed");
-                    }
-                    else {
-                        allSects[currSect].removeSection();
-                        System.out.println("Section " + Integer.toString(
-                            currSect + 1) + " removed");
-                    }
-                }
-                /*
-                 * JOHN,
-                 * SO LIST RETURNS AN ARRAY OF STUDENT OBJECTS, AND THE I
-                 * FIGURED I COULD PRINT IT IS BY ITERATING THROUGH THE ARRAY.
-                 * PLEASE LET ME KNOW IF MY IMPLEMENTATION OF THIS HANDLING IS
-                 * NOT UP TO PAR.
-                 * <3,
-                 * SAM UwU
-                 */
-                case ("list"): {
+                case list: {
                     System.out.println("Students with grade " + lineSpl[1]
                         + " are:");
                     Student[] listed = allSects[currSect].list(lineSpl[1]);
@@ -355,15 +325,7 @@ public class Coursemanager2 {
                     }
                     System.out.println("Found " + listCount + " students");
                 }
-                /*
-                 * JOHN,
-                 * SINCE WE ADDED THIS IN FRONT OF THE TA AND YOU DON'T HAVE THE
-                 * LATEST COURSEMANAGER1, IT DIDN'T HAVE OUR HANDLING FOR
-                 * FINDPAIR. I ADDED IT THOUGH, SO WE'RE GOOD ON THIS
-                 * <3,
-                 * SAM UwU
-                 */
-                case ("findpair"): {
+                case findpair: {
                     int difference = 0;
                     if (lineSpl.length == 2) {
                         difference = Integer.parseInt(lineSpl[1]);
@@ -374,6 +336,31 @@ public class Coursemanager2 {
                             + Integer.toString(difference) + ":");
                     System.out.print(allSects[currSect].findPair(difference));
                 }
+                case merge: {
+                    int totLeng = 0;
+                    int mergeSectNum = -1;
+                    //Gets the total size needed for the merged section as well as what section to merge to.
+                    for (int i = 0; i < allSects.length; i++) {
+                        totLeng = totLeng + allSects[i].getNumStudents();
+                        if (mergeSectNum == -1 && allSects[i].getNumStudents() == 0) {
+                            mergeSectNum = i;
+                        }
+                    }
+                    allSects[mergeSectNum].setMerge(true);
+                    allSects[mergeSectNum].setUpMerge(totLeng);
+                    
+                }
+                case savestudentdata: {
+                    
+                }
+                case savecoursedata: {
+                    
+                }
+                case clearcoursedata: {
+                    
+                }
+                default:
+                    break;
             }
             if (!cmd.equals("insert") && !cmd.equals("search")) {
                 isStud = false;
@@ -386,29 +373,115 @@ public class Coursemanager2 {
     /**
      * Parses the binary file holding course data
      * 
-     * @param string
+     * @param fileName
+     *            is the name of the target binary file
+     * @throws IOException 
      */
-    private static void parseCourseBin(String string) {
+    private static void parseCourseBin(String fileName) throws IOException {
+        //TODO binary parsing
+        InputStream binCourseFile = new FileInputStream(fileName);
+        
+        String[] 
+        int byteRead;
+        
+        while ((byteRead = binCourseFile.read()) != -1) {
+            outputStream.write(byteRead);
+            int charCode = Integer.parseInt(info, 2);
+            ((char)charCode).toString();
+        }
+        
+        binCourseFile.close();
+    }
+
+
+    /**
+     * Parses a text file holding information about course sections
+     * 
+     * @param fileName
+     *            is the file to be read from
+     * @throws FileNotFoundException
+     *             when there is no course data file passed
+     */
+    private static void parseCourseText(String fileName)
+        throws FileNotFoundException {
+        // Integer variables that constitute a student, initialized once for
+        // memory
+        int score;
+        int sectionID;
+        Student tempStudent;
+        File courseFile = new File(fileName);
+        // Scanner that parses the commands
+        Scanner cFile = new Scanner(courseFile);
+        while (cFile.hasNextLine()) {
+            String cLine = cFile.nextLine();
+            // Removes the whitespace and makes an array of substrings
+            String[] split = cLine.trim().split(",\\s+");
+            for (int i = 0; i < split.length; i++) {
+                split[i] = split[i].toLowerCase();
+            }
+            sectionID = Integer.parseInt(split[0]);
+            score = Integer.parseInt(split[4]);
+            int idCheck = studManager.checkIdentity(split[1], split[2],
+                split[3]);
+            if (idCheck == 1) {
+                System.out.println(split[2] + " " + split[3]
+                    + " insertion failed. Wrong student information. ID doesn't exist");
+            }
+            else if (idCheck == 2) {
+                System.out.println(split[2] + " " + split[3]
+                    + " insertion failed. Wrong student information. ID belongs to another student");
+            }
+            else {
+                tempStudent = allSects[sectionID - 1].searchId(split[1]);
+                if (tempStudent != null) {
+                    tempStudent.setGrade(split[5]);
+                    tempStudent.setScore(score);
+                    studManager.updateScore(split[1], score);
+                }
+                else {
+                    allSects[sectionID - 1].insert(split[1], split[2], "",
+                        split[3], score, split[5], sectionID);
+                }
+            }
+        }
+        cFile.close();
+    }
+
+
+    /**
+     * 
+     * @param fileName
+     */
+    private static void parseStudentBin(String fileName) {
         // TODO Auto-generated method stub
 
     }
 
 
-    private static void parseCourseText(String string) {
-        // TODO Auto-generated method stub
-
-    }
-
-
-    private static void parseStudentBin(String string) {
-        // TODO Auto-generated method stub
-
-    }
-
-
-    private static void parseStudentText(String string) {
-        // TODO Auto-generated method stub
-
+    /**
+     * Assigns data to the student manager system that can later be used
+     * Reads a text file
+     * 
+     * @param fileName
+     *            is the student data file
+     * @throws FileNotFoundException
+     *             is thrown when a file name is invalid or not present
+     */
+    private static void parseStudentText(String fileName)
+        throws FileNotFoundException {
+        File studentFile = new File(fileName);
+        // Scanner that parses the commands
+        Scanner sFile = new Scanner(studentFile);
+        while (sFile.hasNextLine()) {
+            String sLine = sFile.nextLine();
+            // Removes the whitespace and makes an array of substrings
+            String[] split = sLine.trim().split(",\\s+");
+            for (int i = 0; i < split.length; i++) {
+                split[i] = split[i].toLowerCase();
+            }
+            studManager.insert(split[0], split[1], split[2], split[3]);
+        }
+        sFile.close();
     }
 
 
@@ -461,6 +534,8 @@ public class Coursemanager2 {
         currSect = 0;
         isStud = false;
         setGradeNames();
+
+        studManager = new StudentManager();
     }
 
 
@@ -470,17 +545,17 @@ public class Coursemanager2 {
      */
     private static void setGradeNames() {
         gradeNames = new String[12];
-        gradeNames[0] = "a";
+        gradeNames[0] = "a ";
         gradeNames[1] = "a-";
         gradeNames[2] = "b+";
-        gradeNames[3] = "b";
+        gradeNames[3] = "b ";
         gradeNames[4] = "b-";
         gradeNames[5] = "c+";
-        gradeNames[6] = "c";
+        gradeNames[6] = "c ";
         gradeNames[7] = "c-";
         gradeNames[8] = "d+";
-        gradeNames[9] = "c";
-        gradeNames[10] = "c-";
+        gradeNames[9] = "d ";
+        gradeNames[10] = "d-";
         gradeNames[11] = "f";
     }
 }

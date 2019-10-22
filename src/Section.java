@@ -62,8 +62,12 @@ public class Section {
      * Switches the sections merged tag so it can be treated like a merged
      * section
      */
-    public void setMerge() {
-        merged = !merged;
+    public void setMerge(boolean mergeState) {
+        merged = mergeState;
+    }
+    
+    public boolean isMerged() {
+        return merged;
     }
 
 
