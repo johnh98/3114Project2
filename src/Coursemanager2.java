@@ -375,7 +375,12 @@ public class Coursemanager2 {
     }
 
 
-    // TODO header
+    /**
+     * Resizes the internal array in this section to accommodate all the
+     * sections to be merged into, sets this section to be a merged section, and
+     * then calls a method to merge in elements from every nonempty section
+     * other than this one.
+     */
     private static void mergeAll() {
         int totLeng = 0;
         // Gets the total size needed for the merged section
@@ -397,10 +402,15 @@ public class Coursemanager2 {
 
 
     /**
-     * A helper method that inserts all students from a given section into the current section
-     * Uses list by grade as it is an available way to safely access all students in a section
-     * Creates a deep copy so that changes to the main sections do not affect the merged one
-     * @param tgtSect is the section to pull data from
+     * A helper method that inserts all students from a given section into the
+     * current section
+     * Uses list by grade as it is an available way to safely access all
+     * students in a section
+     * Creates a deep copy so that changes to the main sections do not affect
+     * the merged one
+     * 
+     * @param tgtSect
+     *            is the section to pull data from
      */
     private static void mergeIn(int tgtSect) {
         for (int gd = 0; gd < gradeNames.length; gd++) {
