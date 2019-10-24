@@ -323,6 +323,38 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
 
 
     /**
+     * Uses copyTraverse() to allow a user class to create a copy without node access
+     * @param copyArr is the array to copy data into
+     */
+    public void makeCopy(V[] copyArr) {
+        int i = 0;
+        copyTraverse(copyArr, i, root);
+    }
+
+
+    /**
+     * Recursively creates an array representation of the data in the tree.
+     * 
+     * @param copyArr
+     *            is the array to place the data in
+     * @param num
+     *            is the current index to place at
+     * @param rootNode
+     *            is the node to center the recursion at
+     */
+    private void copyTraverse(V[] copyArr, int num, KeyNode<K, V> rootNode) {
+        if (rootNode.getLeft() != null) {
+            copyTraverse(copyArr, num, rootNode.getLeft());
+        }
+        copyArr[num] = rootNode.getValue();
+        num++;
+        if (rootNode.getRight() != null) {
+            copyTraverse(copyArr, num, rootNode.getRight());
+        }
+    }
+
+
+    /**
      * Gets an in-order string representation of the tree for testing
      * 
      * @return an in-order string representation of the tree

@@ -16,6 +16,9 @@ public class StudentManager {
      */
     private BinarySearchTree<String, Student> students;
 
+    // Holds the number of total students being managed
+    int numStudents;
+
 
     /**
      * Sets up a student manager by creating the binary tree
@@ -23,7 +26,7 @@ public class StudentManager {
     public StudentManager() {
 
         students = new BinarySearchTree<String, Student>();
-
+        numStudents = 0;
     }
 
 
@@ -43,7 +46,21 @@ public class StudentManager {
 
         Student newStu = new Student(pid, first, mid, last, 0, "F");
         students.insert(pid, newStu);
+        numStudents++;
+    }
 
+
+    /**
+     * Creates a shallow copy of the array of students for the purposes of
+     * merging and saving data. Will be deep copied at the source of the call
+     * 
+     * @return an array of all Students in the manager
+     */
+    public Student[] copyStudents() {
+        Student[] copy = new Student[numStudents];
+        students.makeCopy(copy);
+
+        return copy;
     }
 
 

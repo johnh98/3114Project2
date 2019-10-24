@@ -106,12 +106,15 @@ public class Coursemanager2 {
             // Removes the whitespace and makes an array of substrings
             String[] lineSpl = line.trim().split("\\s+");
             String cmd = lineSpl[0].toLowerCase();
-            String cmdPre = cmd.substring(0, 4);
-            if (!cmdPre.equals("load") && !cmdPre.equals("save")) {
-                for (int i = 0; i < lineSpl.length; i++) {
-                    lineSpl[i] = lineSpl[i].toLowerCase();
+            if (cmd.length() >= 4) {
+                String cmdPre = cmd.substring(0, 4);
+                if (!cmdPre.equals("load") && !cmdPre.equals("save")) {
+                    for (int i = 0; i < lineSpl.length; i++) {
+                        lineSpl[i] = lineSpl[i].toLowerCase();
+                    }
                 }
             }
+
             // Turns the initial command into an enum to switch on
             Command command = Command.setCommand(cmd);
             switch (command) {
@@ -124,6 +127,8 @@ public class Coursemanager2 {
                     if (fileExt.equals("data")) {
                         parseStudentBin(lineSpl[1]);
                     }
+                    isStudData = true;
+                    break;
                 }
                 case loadcoursedata: {
                     String fileExt = lineSpl[1].substring(lineSpl[1].length()
@@ -137,10 +142,12 @@ public class Coursemanager2 {
                     else {
                         System.out.println("No valid student data loaded");
                     }
+                    break;
                 }
                 case section: {
                     currSect = Integer.parseInt(lineSpl[1]) - 1;
                     System.out.println("Switch to section " + lineSpl[1]);
+                    break;
                 }
                 case insert: {
                     // Prevents the command being run on a merged section
@@ -155,7 +162,7 @@ public class Coursemanager2 {
                     String perID = "";
                     String grade = "F";
                     int score = 0;
-                    if (lineSpl.length % 2 == 0) {
+                    if (lineSpl.length % 2 != 0) {
                         fName = lineSpl[2];
                         mName = lineSpl[3];
                         lName = lineSpl[4];
@@ -173,6 +180,7 @@ public class Coursemanager2 {
                     currStud = allSects[currSect].insert(perID, fName, mName,
                         lName, score, grade, currSect + 1);
                     isStud = true;
+                    break;
                 }
                 case searchid: {
                     // Prevents the command being run on a merged section
@@ -193,6 +201,7 @@ public class Coursemanager2 {
                         currStud = result;
                         isStud = true;
                     }
+                    break;
                 }
                 case search: {
                     // Prevents the command being run on a merged section
@@ -235,6 +244,7 @@ public class Coursemanager2 {
                         int j = 0;
                         while (j < result.length && result[j] != null) {
                             System.out.println(result[j].toString());
+                            j++;
                         }
                         if (j > 0) {
                             isStud = true;
@@ -244,6 +254,7 @@ public class Coursemanager2 {
                             + " records in section " + Integer.toString(currSect
                                 + 1));
                     }
+                    break;
                 }
                 case score: {
                     // The new score to be assigned
@@ -266,6 +277,7 @@ public class Coursemanager2 {
                         System.out.println(
                             "Scores have to be integers in range 0 to 100.");
                     }
+                    break;
                 }
                 case remove: {
                     // Prevents the command being run on a merged section
@@ -280,6 +292,7 @@ public class Coursemanager2 {
                     else if (lineSpl.length == 3) {
                         allSects[currSect].remove(lineSpl[1], lineSpl[2]);
                     }
+                    break;
                 }
                 case grade: {
                     // Prevents the command being run on a merged section
@@ -290,6 +303,7 @@ public class Coursemanager2 {
                     }
                     allSects[currSect].grade();
                     System.out.println("grading completed");
+                    break;
                 }
                 case stat: {
                     // Holds the grade totals of the students
@@ -307,6 +321,7 @@ public class Coursemanager2 {
                         }
                         j++;
                     }
+                    break;
                 }
                 case dumpsection: {
                     System.out.println("Section " + Integer.toString(currSect
@@ -314,21 +329,28 @@ public class Coursemanager2 {
                     allSects[currSect].dumpSection();
                     System.out.println("Size = " + Integer.toString(
                         allSects[currSect].getNumStudents()));
+                    break;
                 }
                 case clearsection: {
                     allSects[currSect].clearSection();
                     System.out.println("Section " + currSect + " cleared");
+                    break;
                 }
                 case list: {
                     System.out.println("Students with grade " + lineSpl[1]
                         + " are:");
                     Student[] listed = allSects[currSect].list(lineSpl[1]);
                     int listCount = 0;
+                    if (listed.length == 0) {
+                        System.out.println("Found 0 students");
+                        break;
+                    }
                     while (listed[listCount] != null) {
                         System.out.println(listed[listCount].toString());
                         listCount++;
                     }
                     System.out.println("Found " + listCount + " students");
+                    break;
                 }
                 case findpair: {
                     int difference = 0;
@@ -340,6 +362,7 @@ public class Coursemanager2 {
                         "Students with score difference less than or equal "
                             + Integer.toString(difference) + ":");
                     System.out.print(allSects[currSect].findPair(difference));
+                    break;
                 }
                 case merge: {
                     if (allSects[currSect].getNumStudents() != 0) {
@@ -353,18 +376,22 @@ public class Coursemanager2 {
                         System.out.println("All sections merged at section "
                             + Integer.toString(currSect + 1));
                     }
+                    break;
                 }
                 case savestudentdata: {
-                    saveStudBin();
+                    saveStudBin(lineSpl[1]);
+                    break;
                 }
                 case savecoursedata: {
-                    saveCourseBin();
+                    saveCourseBin(lineSpl[1]);
+                    break;
                 }
                 case clearcoursedata: {
-                    saveCourseBin();
+                    saveCourseBin("courseDataBackupJHSH.data");
                     for (int i = 0; i < allSects.length; i++) {
                         allSects[i].clearSection();
                     }
+                    break;
                 }
                 default:
                     break;
@@ -377,23 +404,115 @@ public class Coursemanager2 {
     }
 
 
-    private static void saveCourseBin() {
-        // TODO Auto-generated method stub
+    /**
+     * Saves the current course data from all sections to a specified .data
+     * file.
+     * 
+     * @param fileName
+     *            is the target file to save to
+     * @throws IOException
+     *             when the RAF functions encounter unexpected behavior
+     */
+    private static void saveCourseBin(String fileName) throws IOException {
+        // Opens the file of course data
+        RandomAccessFile saveCourseFile = new RandomAccessFile(fileName, "rw");
 
+        saveCourseFile.write("CS3114atVT".getBytes());
+        saveCourseFile.write(decToBin(allSects.length));
+
+        for (int i = 0; i < allSects.length; i++) {
+            Section thisSection = allSects[i];
+            for (int j = 0; j < thisSection.getNumStudents(); j++) {
+                Student[] allStudents = thisSection.dumpCopy();
+                Student curr = allStudents[i];
+                if (curr != null) {
+                    long PID = Long.parseLong(curr.getID());
+                    saveCourseFile.write(longToBin(PID));
+
+                    saveCourseFile.write((curr.getFirstName() + "$")
+                        .getBytes());
+                    saveCourseFile.write((curr.getLastName() + "$").getBytes());
+
+                    saveCourseFile.write(decToBin(curr.getScore()));
+                    saveCourseFile.write(curr.getGrade().getBytes());
+                }
+            }
+            saveCourseFile.write("GOHOKIES".getBytes());
+        }
+        saveCourseFile.close();
     }
 
 
-    private static void saveStudBin() {
-        // TODO Auto-generated method stub
+    /**
+     * Saves the student data from the student manager to a target binary file.
+     * 
+     * @param fileName
+     *            is the name of the file to be saved to
+     * @throws IOException
+     *             in case of the RAF encountering unexpected behavior.
+     */
+    private static void saveStudBin(String fileName) throws IOException {
+        // Opens the file of student data
+        RandomAccessFile saveStudFile = new RandomAccessFile(fileName, "rw");
+        Student[] allStudents = studManager.copyStudents();
 
+        saveStudFile.write("VTSTUDENTS".getBytes());
+        saveStudFile.write(decToBin(allStudents.length));
+
+        for (int i = 0; i < allStudents.length; i++) {
+            Student curr = allStudents[i];
+
+            long PID = Long.parseLong(curr.getID());
+            saveStudFile.write(longToBin(PID));
+
+            saveStudFile.write((curr.getFirstName() + "$").getBytes());
+            saveStudFile.write((curr.getMiddleName() + "$").getBytes());
+            saveStudFile.write((curr.getLastName() + "$").getBytes());
+
+            saveStudFile.write("GOHOKIES".getBytes());
+        }
+        saveStudFile.close();
+    }
+
+
+    /**
+     * Creates an array of bytes from an integer value to write to a .data file
+     * Uses bit manipulation to get the binary representations of each of the
+     * four bytes in order
+     * 
+     * @param n
+     *            is the number to break down.
+     * @return the final byte array.
+     */
+    private static byte[] decToBin(int n) {
+        return new byte[] { (byte)(n >>> 24), (byte)(n >>> 16), (byte)(n >>> 8),
+            (byte)n };
+    }
+
+
+    /**
+     * Creates an array of bytes from a long value to write to a .data file
+     * Uses bit manipulation like decToBin() but with 8 bytes
+     * 
+     * @param n
+     *            is the number to break down.
+     * @return the final byte array.
+     */
+    private static byte[] longToBin(long n) {
+        return new byte[] { (byte)(n >>> 64), (byte)(n >>> 48),
+            (byte)(n >>> 40), (byte)(n >>> 32), (byte)(n >>> 24),
+            (byte)(n >>> 16), (byte)(n >>> 8), (byte)n };
     }
 
 
     /**
      * Resizes the internal array in this section to accommodate all the
      * sections to be merged into, sets this section to be a merged section, and
-     * then calls a method to merge in elements from every nonempty section
-     * other than this one.
+     * then calls a method to retrieve all students from the manager.
+     * Once all the managed students are available, transfers the ones in a
+     * section
+     * into the new one by deep copying their data into a new student object
+     * in the current merged section.
      */
     private static void mergeAll() {
         int totLeng = 0;
@@ -406,34 +525,13 @@ public class Coursemanager2 {
         // Enlarges the section to fit all the data from the others
         allSects[currSect].setUpMerge(totLeng);
 
-        for (int tgtSect = 0; tgtSect < allSects.length; tgtSect++) {
-            if (tgtSect != currSect && allSects[tgtSect]
-                .getNumStudents() != 0) {
-                mergeIn(tgtSect);
-            }
-        }
-    }
-
-
-    /**
-     * A helper method that inserts all students from a given section into the
-     * current section
-     * Uses list by grade as it is an available way to safely access all
-     * students in a section
-     * Creates a deep copy so that changes to the main sections do not affect
-     * the merged one
-     * 
-     * @param tgtSect
-     *            is the section to pull data from
-     */
-    private static void mergeIn(int tgtSect) {
-        for (int gd = 0; gd < gradeNames.length; gd++) {
-            Student[] studGroup = allSects[tgtSect].list(gradeNames[gd]);
-            for (int i = 0; i < studGroup.length; i++) {
-                allSects[currSect].insert(studGroup[i].getID(), studGroup[i]
-                    .getFirstName(), studGroup[i].getMiddleName(), studGroup[i]
-                        .getLastName(), studGroup[i].getScore(), studGroup[i]
-                            .getGrade(), studGroup[i].getSection());
+        Student[] allStudents = studManager.copyStudents();
+        for (int j = 0; j < allStudents.length; j++) {
+            Student curr = allStudents[j];
+            if (curr != null && curr.getSection() > 0) {
+                allSects[currSect].insert(curr.getID(), curr.getFirstName(),
+                    curr.getMiddleName(), curr.getLastName(), curr.getScore(),
+                    curr.getGrade(), curr.getSection());
             }
         }
     }
@@ -448,7 +546,7 @@ public class Coursemanager2 {
      *             in the event of unexpected behavior from the RAF
      */
     private static void parseCourseBin(String fileName) throws IOException {
-        // Opens the file of student data
+        // Opens the file of course data
         RandomAccessFile binCourseFile = new RandomAccessFile(fileName, "r");
         // If the file is less than the initial string length, it is invalid
         // Stops IOExceptions from reading over the file end
@@ -456,6 +554,7 @@ public class Coursemanager2 {
             binCourseFile.close();
             return;
         }
+        System.out.println(binCourseFile.length());
         // Allocates the variables that make up the student so they don't have
         // to be reinitialized every loop
         String firstName = new String();
@@ -487,26 +586,28 @@ public class Coursemanager2 {
                 byte[] next = new byte[1];
                 binCourseFile.readFully(next);
                 String nextStr = new String(next, StandardCharsets.UTF_8);
-                // Sets the first name to its first character, can be added to.
-                firstName = nextStr;
+                // Sets the first name to an empty string, can be added to.
+                firstName = "";
                 // Adds each subsequent character to the name until the
                 // delimiter
                 while (!(nextStr.equals("$"))) {
+                    firstName = firstName + nextStr;
                     binCourseFile.readFully(next);
                     nextStr = new String(next, StandardCharsets.UTF_8);
-                    firstName = firstName + nextStr;
                 }
+                firstName = firstName.toLowerCase();
 
                 // As above, repeated for last name
                 next = new byte[1];
                 binCourseFile.readFully(next);
                 nextStr = new String(next, StandardCharsets.UTF_8);
-                lastName = nextStr;
+                lastName = "";
                 while (!(nextStr.equals("$"))) {
+                    lastName = lastName + nextStr;
                     binCourseFile.readFully(next);
                     nextStr = new String(next, StandardCharsets.UTF_8);
-                    lastName = lastName + nextStr;
                 }
+                lastName = lastName.toLowerCase();
 
                 scoreNum = binCourseFile.readInt();
 
@@ -516,8 +617,8 @@ public class Coursemanager2 {
                     StandardCharsets.UTF_8);
                 grade = gradeStr;
 
-                allSects[line].insert(PID, firstName, "", lastName, scoreNum,
-                    grade, line);
+                allSects[line - 1].insert(PID, firstName, "", lastName,
+                    scoreNum, grade, line);
                 stud++;
             }
             // Retrieves GOHOKIES at the end of each section
@@ -630,35 +731,38 @@ public class Coursemanager2 {
             studDataFile.readFully(next);
             String nextStr = new String(next, StandardCharsets.UTF_8);
             // Sets the first name to its first character, can be added to.
-            firstName = nextStr;
+            firstName = "";
             // Adds each subsequent character to the name until the delimiter
             while (!(nextStr.equals("$"))) {
+                firstName = firstName + nextStr;
                 studDataFile.readFully(next);
                 nextStr = new String(next, StandardCharsets.UTF_8);
-                firstName = firstName + nextStr;
             }
+            firstName = firstName.toLowerCase();
 
             // As above, repeated for middle name
             next = new byte[1];
             studDataFile.readFully(next);
             nextStr = new String(next, StandardCharsets.UTF_8);
-            middleName = nextStr;
+            middleName = "";
             while (!(nextStr.equals("$"))) {
+                middleName = middleName + nextStr;
                 studDataFile.readFully(next);
                 nextStr = new String(next, StandardCharsets.UTF_8);
-                middleName = middleName + nextStr;
             }
+            middleName = middleName.toLowerCase();
 
             // As above, repeated for last name
             next = new byte[1];
             studDataFile.readFully(next);
             nextStr = new String(next, StandardCharsets.UTF_8);
-            lastName = nextStr;
+            lastName = "";
             while (!(nextStr.equals("$"))) {
+                lastName = lastName + nextStr;
                 studDataFile.readFully(next);
                 nextStr = new String(next, StandardCharsets.UTF_8);
-                lastName = lastName + nextStr;
             }
+            lastName = lastName.toLowerCase();
 
             // Retrieves GOHOKIES at the end of each name
             byte[] dLimit2 = new byte[8];
@@ -690,7 +794,7 @@ public class Coursemanager2 {
         while (sFile.hasNextLine()) {
             String sLine = sFile.nextLine();
             // Removes the whitespace and makes an array of substrings
-            String[] split = sLine.trim().split(",\\s+");
+            String[] split = sLine.trim().split(",");
             for (int i = 0; i < split.length; i++) {
                 split[i] = split[i].toLowerCase();
             }

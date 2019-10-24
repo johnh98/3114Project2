@@ -303,6 +303,27 @@ public class Section {
 
 
     /**
+     * Creates and returns a deep copy of all (non-tombstoned) students in this
+     * section
+     * Necessary for saving course data
+     * 
+     * @return the array of new Students based on this Sections internal array
+     */
+    public Student[] dumpCopy() {
+        Student[] copy = new Student[numStud];
+        for (int i = 0; i < numStud; i++) {
+            if (studArray[i].getSection() != -1) {
+                copy[i] = new Student(studArray[i].getID(), studArray[i]
+                    .getFirstName(), studArray[i].getMiddleName(), studArray[i]
+                        .getLastName(), studArray[i].getScore(), studArray[i]
+                            .getGrade());
+            }
+        }
+        return copy;
+    }
+
+
+    /**
      * Goes through the section and assigns every student a grade based on
      * their score. Records the total number of students with each letter grade
      * 
