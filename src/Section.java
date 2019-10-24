@@ -48,15 +48,20 @@ public class Section {
 
     }
 
+
     /**
-     * This method resizes the student array in cases where a merge would result in out of bounds
-     * @param size the combined size of all component sections
+     * This method resizes the student array in cases where a merge would result
+     * in out of bounds
+     * 
+     * @param size
+     *            the combined size of all component sections
      */
     public void setUpMerge(int size) {
         if (merged) {
             studArray = new Student[size];
         }
     }
+
 
     /**
      * Switches the sections merged tag so it can be treated like a merged
@@ -65,7 +70,13 @@ public class Section {
     public void setMerge(boolean mergeState) {
         merged = mergeState;
     }
-    
+
+
+    /**
+     * Checks whether the section is merged or not
+     * 
+     * @return whether the section is merged or not
+     */
     public boolean isMerged() {
         return merged;
     }
@@ -190,7 +201,7 @@ public class Section {
     public void remove(String first, String last) {
 
         Student[] finds = search(first, last);
-        if (finds[0].equals(null) || !(finds[1].equals(null))) {
+        if (finds[0] == null || !(finds[1] == null)) {
             System.out.println("Remove failed. Student " + first + " " + last
                 + " doesn't exist in section " + secNum);
         }
@@ -276,11 +287,17 @@ public class Section {
      */
     public void dumpSection() {
         System.out.println("BST by ID:");
-        printPIDTree(pidTree.getRoot());
+        if (numStud != 0) {
+            printPIDTree(pidTree.getRoot());
+        }
         System.out.println("BST by name:");
-        printNameTree(nameTree.getRoot());
+        if (numStud != 0) {
+            printNameTree(nameTree.getRoot());
+        }
         System.out.println("BST by score:");
-        printScoreTree(scoreTree.getRoot());
+        if (numStud != 0) {
+            printScoreTree(scoreTree.getRoot());
+        }
     }
 
 
@@ -363,6 +380,7 @@ public class Section {
         Integer currId = pidTree.find(pid);
         if (!(currId == null)) {
             Integer oldScore = studArray[currId].getScore();
+            studArray[currId].setScore(score);
             scoreTree.remove(oldScore, currId);
             scoreTree.insert(score, currId);
 
