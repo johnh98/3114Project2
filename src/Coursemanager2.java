@@ -1,8 +1,8 @@
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 // On my honor:
@@ -58,7 +58,6 @@ public class Coursemanager2 {
     private static Section section18;
     private static Section section19;
     private static Section section20;
-    private static Section section21;
     // Holds all sections
     private static Section[] allSects;
     // The current operational section
@@ -118,7 +117,7 @@ public class Coursemanager2 {
             switch (command) {
                 case loadstudentdata: {
                     String fileExt = lineSpl[1].substring(lineSpl[1].length()
-                        - 4, lineSpl[1].length());
+                        - 4);
                     if (fileExt.equals(".csv")) {
                         parseStudentText(lineSpl[1]);
                     }
@@ -128,7 +127,7 @@ public class Coursemanager2 {
                 }
                 case loadcoursedata: {
                     String fileExt = lineSpl[1].substring(lineSpl[1].length()
-                        - 4, lineSpl[1].length());
+                        - 4);
                     if (fileExt.equals(".csv") && isStudData) {
                         parseCourseText(lineSpl[1]);
                     }
@@ -356,13 +355,16 @@ public class Coursemanager2 {
                     }
                 }
                 case savestudentdata: {
-
+                    saveStudBin();
                 }
                 case savecoursedata: {
-
+                    saveCourseBin();
                 }
                 case clearcoursedata: {
-
+                    saveCourseBin();
+                    for (int i = 0; i < allSects.length; i++) {
+                        allSects[i].clearSection();
+                    }
                 }
                 default:
                     break;
@@ -372,6 +374,18 @@ public class Coursemanager2 {
             }
         }
         file.close();
+    }
+
+
+    private static void saveCourseBin() {
+        // TODO Auto-generated method stub
+
+    }
+
+
+    private static void saveStudBin() {
+        // TODO Auto-generated method stub
+
     }
 
 
@@ -430,20 +444,87 @@ public class Coursemanager2 {
      * 
      * @param fileName
      *            is the name of the target binary file
-     * @throws IOException 
+     * @throws IOException
+     *             in the event of unexpected behavior from the RAF
      */
     private static void parseCourseBin(String fileName) throws IOException {
-        //TODO binary parsing
-        InputStream binCourseFile = new FileInputStream(fileName);
-        
-        String[] dataString = new String[]
-        int byteRead;
-        
-        while ((byteRead = binCourseFile.read()) != -1) {
-            int charCode = Integer.parseInt(info, 2);
-            ((char)charCode).toString();
+        // Opens the file of student data
+        RandomAccessFile binCourseFile = new RandomAccessFile(fileName, "r");
+        // If the file is less than the initial string length, it is invalid
+        // Stops IOExceptions from reading over the file end
+        if (binCourseFile.length() < 10) {
+            binCourseFile.close();
+            return;
         }
-        
+        // Allocates the variables that make up the student so they don't have
+        // to be reinitialized every loop
+        String firstName = new String();
+        String lastName = new String();
+        long perID;
+        String PID = new String();
+        int scoreNum;
+        String grade = new String();
+        // Retrieves the first line, "CS3114atVT"
+        byte[] dLimit1 = new byte[10];
+        binCourseFile.readFully(dLimit1);
+        // Gets the number of students and iterates through each
+        int numSects = binCourseFile.readInt();
+        int line = 1;
+        while (line <= numSects) {
+            int stud = 0;
+            int numStudents = binCourseFile.readInt();
+            while (stud < numStudents) {
+                // Retrieves the PID as a long and casts it to a string
+                perID = binCourseFile.readLong();
+                PID = Long.toString(perID);
+
+                // Creates a byte array to hold exactly 1 character at a time
+                // As the max length is specified, we could grab 16 characters
+                // at
+                // once but that is bad for generalization and has a chance of
+                // reading past file end in the case of a short name in the last
+                // line.
+                byte[] next = new byte[1];
+                binCourseFile.readFully(next);
+                String nextStr = new String(next, StandardCharsets.UTF_8);
+                // Sets the first name to its first character, can be added to.
+                firstName = nextStr;
+                // Adds each subsequent character to the name until the
+                // delimiter
+                while (!(nextStr.equals("$"))) {
+                    binCourseFile.readFully(next);
+                    nextStr = new String(next, StandardCharsets.UTF_8);
+                    firstName = firstName + nextStr;
+                }
+
+                // As above, repeated for last name
+                next = new byte[1];
+                binCourseFile.readFully(next);
+                nextStr = new String(next, StandardCharsets.UTF_8);
+                lastName = nextStr;
+                while (!(nextStr.equals("$"))) {
+                    binCourseFile.readFully(next);
+                    nextStr = new String(next, StandardCharsets.UTF_8);
+                    lastName = lastName + nextStr;
+                }
+
+                scoreNum = binCourseFile.readInt();
+
+                byte[] gradeBytes = new byte[2];
+                binCourseFile.readFully(gradeBytes);
+                String gradeStr = new String(gradeBytes,
+                    StandardCharsets.UTF_8);
+                grade = gradeStr;
+
+                allSects[line].insert(PID, firstName, "", lastName, scoreNum,
+                    grade, line);
+                stud++;
+            }
+            // Retrieves GOHOKIES at the end of each section
+            byte[] dLimit2 = new byte[8];
+            binCourseFile.readFully(dLimit2);
+            line++;
+        }
         binCourseFile.close();
     }
 
@@ -503,12 +584,92 @@ public class Coursemanager2 {
 
 
     /**
+     * Reads student data from a binary file using the initial header string
+     * "VTSTUDENTS", a delimiter of '$' and a final string after each student of
+     * "GOHOKIES"
      * 
      * @param fileName
+     *            is the name of the binary file ending in ".data" (Ensured by
+     *            the call in main)
+     * @throws IOException
+     *             when there is unexpected behavior from the RandomAccessFile.
      */
-    private static void parseStudentBin(String fileName) {
-        // TODO Auto-generated method stub
+    private static void parseStudentBin(String fileName) throws IOException {
+        // Opens the file of student data
+        RandomAccessFile studDataFile = new RandomAccessFile(fileName, "r");
+        // If the file is less than the initial string length, it is invalid
+        // Stops IOExceptions from reading over the file end
+        if (studDataFile.length() < 10) {
+            studDataFile.close();
+            return;
+        }
+        // Allocates the variables that make up the student so they don't have
+        // to be reinitialized every loop
+        String firstName = new String();
+        String middleName = new String();
+        String lastName = new String();
+        long perID;
+        String PID = new String();
+        // Retrieves the first line, "VTSTUDENTS"
+        byte[] dLimit1 = new byte[10];
+        studDataFile.readFully(dLimit1);
+        // Gets the number of students and iterates through each
+        int numStudents = studDataFile.readInt();
+        int line = 0;
+        while (line < numStudents) {
+            // Retrieves the PID as a long and casts it to a string
+            perID = studDataFile.readLong();
+            PID = Long.toString(perID);
 
+            // Creates a byte array to hold exactly 1 character at a time
+            // As the max length is specified, we could grab 16 characters at
+            // once but that is bad for generalization and has a chance of
+            // reading past file end in the case of a short name in the last
+            // line.
+            byte[] next = new byte[1];
+            studDataFile.readFully(next);
+            String nextStr = new String(next, StandardCharsets.UTF_8);
+            // Sets the first name to its first character, can be added to.
+            firstName = nextStr;
+            // Adds each subsequent character to the name until the delimiter
+            while (!(nextStr.equals("$"))) {
+                studDataFile.readFully(next);
+                nextStr = new String(next, StandardCharsets.UTF_8);
+                firstName = firstName + nextStr;
+            }
+
+            // As above, repeated for middle name
+            next = new byte[1];
+            studDataFile.readFully(next);
+            nextStr = new String(next, StandardCharsets.UTF_8);
+            middleName = nextStr;
+            while (!(nextStr.equals("$"))) {
+                studDataFile.readFully(next);
+                nextStr = new String(next, StandardCharsets.UTF_8);
+                middleName = middleName + nextStr;
+            }
+
+            // As above, repeated for last name
+            next = new byte[1];
+            studDataFile.readFully(next);
+            nextStr = new String(next, StandardCharsets.UTF_8);
+            lastName = nextStr;
+            while (!(nextStr.equals("$"))) {
+                studDataFile.readFully(next);
+                nextStr = new String(next, StandardCharsets.UTF_8);
+                lastName = lastName + nextStr;
+            }
+
+            // Retrieves GOHOKIES at the end of each name
+            byte[] dLimit2 = new byte[8];
+            studDataFile.readFully(dLimit2);
+
+            // Inserts the newly created student into StudentManager
+            studManager.insert(PID, firstName, middleName, lastName);
+
+            line++;
+        }
+        studDataFile.close();
     }
 
 
@@ -547,23 +708,23 @@ public class Coursemanager2 {
         section1 = new Section(1);
         section2 = new Section(2);
         section3 = new Section(3);
-        section3 = new Section(4);
-        section3 = new Section(5);
-        section3 = new Section(6);
-        section3 = new Section(7);
-        section3 = new Section(8);
-        section3 = new Section(9);
-        section3 = new Section(10);
-        section3 = new Section(11);
-        section3 = new Section(12);
-        section3 = new Section(13);
-        section3 = new Section(14);
-        section3 = new Section(15);
-        section3 = new Section(16);
-        section3 = new Section(17);
-        section3 = new Section(18);
-        section3 = new Section(19);
-        section3 = new Section(20);
+        section4 = new Section(4);
+        section5 = new Section(5);
+        section6 = new Section(6);
+        section7 = new Section(7);
+        section8 = new Section(8);
+        section9 = new Section(9);
+        section10 = new Section(10);
+        section11 = new Section(11);
+        section12 = new Section(12);
+        section13 = new Section(13);
+        section14 = new Section(14);
+        section15 = new Section(15);
+        section16 = new Section(16);
+        section17 = new Section(17);
+        section18 = new Section(18);
+        section19 = new Section(19);
+        section20 = new Section(20);
         allSects[0] = section1;
         allSects[1] = section2;
         allSects[2] = section3;

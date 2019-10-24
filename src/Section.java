@@ -222,6 +222,7 @@ public class Section {
         pidTree.makeEmpty();
         nameTree.makeEmpty();
         scoreTree.makeEmpty();
+        merged = false;
         size = 0;
         numStud = 0;
         studArray = new Student[200];
