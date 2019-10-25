@@ -437,6 +437,7 @@ public class Coursemanager2 {
                     for (int i = 0; i < allSects.length; i++) {
                         allSects[i].clearSection();
                     }
+                    studManager.resetStuMan();
                     System.out.println("All course data cleared.");
                     break;
                 }
