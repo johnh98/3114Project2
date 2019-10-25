@@ -725,8 +725,12 @@ public class Coursemanager2 {
             }
             sectionID = Integer.parseInt(split[0]);
             score = Integer.parseInt(split[4]);
-            int idCheck = studManager.checkIdentity(split[1], split[2],
-                split[3]);
+            String newID = split[1];
+            while (newID.length() < 9) {
+                newID = "0" + newID;
+                System.out.println(newID);
+            }
+            int idCheck = studManager.checkIdentity(newID, split[2], split[3]);
             if (idCheck == 1) {
                 System.out.println(split[2] + " " + split[3]
                     + " insertion failed. Wrong student information."
@@ -739,19 +743,17 @@ public class Coursemanager2 {
             }
             else {
 
-                tempStudent = studManager.searchStu(split[1]);// allSects[sectionID
-                                                              // -
-                                                              // 1].searchId(split[1]);
+                tempStudent = studManager.searchStu(newID);
                 if (tempStudent.getSection() == sectionID) {
                     tempStudent.setGrade(split[5]);
                     tempStudent.setScore(score);
-                    studManager.updateScore(split[1], score);
+                    studManager.updateScore(newID, score);
                 }
                 else if (tempStudent.getSection() <= 0) {
-                    allSects[sectionID - 1].insertNoText(split[1], split[2], "",
+                    allSects[sectionID - 1].insertNoText(newID, split[2], "",
                         split[3], score, split[5], sectionID);
-                    studManager.updateSection(split[1], sectionID);
-                    studManager.updateScore(split[1], score);
+                    studManager.updateSection(newID, sectionID);
+                    studManager.updateScore(newID, score);
                 }
                 else {
                     System.out.println("Warning: Student " + split[2] + " "
