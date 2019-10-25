@@ -406,7 +406,7 @@ public class Section {
      */
     public void updateStudentScore(String pid, Integer score) {
         Integer currId = pidTree.find(pid);
-        if (!(currId == null)) {
+        if (currId != null) {
             Integer oldScore = studArray[currId].getScore();
             studArray[currId].setScore(score);
             scoreTree.remove(oldScore, currId);

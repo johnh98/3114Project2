@@ -246,7 +246,7 @@ public class SectionTest extends TestCase {
         // Shows that the previous grade command updated student grades (except
         // for 14, who is tombstoned and therefore is not updated)
         assertTrue(tester.searchId("t14").getGrade().equals("f"));
-        assertTrue(tester.searchId("t12").getGrade().equals("A"));
+        assertTrue(tester.searchId("t12").getGrade().equals("A "));
         assertTrue(tester.searchId("t2").getGrade().equals("D-"));
     }
 
