@@ -137,11 +137,15 @@ public class Coursemanager2 {
                         - 4);
                     if (fileExt.equals(".csv") && isStudData) {
                         parseCourseText(lineSpl[1]);
-                        System.out.println("CS3114 Course has been successfully loaded");
+                        System.out.println(lineSpl[1].substring(0, lineSpl[1]
+                            .length() - 4)
+                            + " Course has been successfully loaded");
                     }
                     else if (fileExt.equals("data") && isStudData) {
                         parseCourseBin(lineSpl[1]);
-                        System.out.println("CS3114 Course has been successfully loaded");
+                        System.out.println(lineSpl[1].substring(0, lineSpl[1]
+                            .length() - 5)
+                            + " Course has been successfully loaded");
                     }
                     else {
                         System.out.println(
@@ -190,11 +194,13 @@ public class Coursemanager2 {
                     }
                     else if (ident == 1) {
                         System.out.println(fName + " " + lName
-                            + " insertion failed. Wrong student information. ID doesn't exist");
+                            + " insertion failed. Wrong student information. " 
+                            + "ID doesn't exist");
                     }
                     else if (ident == 2) {
                         System.out.println(fName + " " + lName
-                            + " insertion failed. Wrong student information. ID belongs to another student");
+                            + " insertion failed. Wrong student information. "
+                            + "ID belongs to another student");
                     }
                     break;
                 }
@@ -202,14 +208,15 @@ public class Coursemanager2 {
                     // Prevents the command being run on a merged section
                     if (allSects[currSect].isMerged()) {
                         System.out.println(
-                            "Command searchid is not valid for merged sections");
+                            "Command searchid is not " 
+                            + "valid for merged sections");
                         break;
                     }
                     Student result = allSects[currSect].searchId(lineSpl[1]);
                     if (result == null) {
                         System.out.println(
-                            "Search Failed. Couldn't find any student with id "
-                                + lineSpl[1]);
+                            "Search Failed. Couldn't find any " 
+                            + "student with id " + lineSpl[1]);
                         isStud = false;
                     }
                     else {
@@ -449,8 +456,8 @@ public class Coursemanager2 {
                 Student[] allStudents = thisSection.dumpCopy();
                 Student curr = allStudents[j];
                 // if (curr != null) {
-                long PID = Long.parseLong(curr.getID());
-                saveCourseFile.writeLong(PID);
+                long newPID = Long.parseLong(curr.getID());
+                saveCourseFile.writeLong(newPID);
 
                 saveCourseFile.writeBytes((curr.getFirstName() + "$"));
                 saveCourseFile.writeBytes((curr.getLastName() + "$"));
@@ -487,8 +494,8 @@ public class Coursemanager2 {
         for (int i = 0; i < allStudents.length; i++) {
             Student curr = allStudents[i];
 
-            long PID = Long.parseLong(curr.getID());
-            saveStudFile.writeLong(PID);
+            long newPID = Long.parseLong(curr.getID());
+            saveStudFile.writeLong(newPID);
 
             saveStudFile.writeBytes(curr.getFirstName() + "$");
             saveStudFile.writeBytes(curr.getMiddleName() + "$");
@@ -552,10 +559,10 @@ public class Coursemanager2 {
         // System.out.println(binCourseFile.length());
         // Allocates the variables that make up the student so they don't have
         // to be reinitialized every loop
-        String firstName = new String();
-        String lastName = new String();
+        String firstName;
+        String lastName;
         long perID;
-        String PID = new String();
+        String newPID;
         int scoreNum;
         String grade = new String();
         // Retrieves the first line, "CS3114atVT"
@@ -570,7 +577,7 @@ public class Coursemanager2 {
             while (stud < numStudents) {
                 // Retrieves the PID as a long and casts it to a string
                 perID = binCourseFile.readLong();
-                PID = Long.toString(perID);
+                newPID = Long.toString(perID);
 
                 // Creates a byte array to hold exactly 1 character at a time
                 // As the max length is specified, we could grab 16 characters
@@ -616,8 +623,8 @@ public class Coursemanager2 {
                     StandardCharsets.UTF_8);
                 grade = gradeStr;
 
-                allSects[line - 1].insertNoText(PID, firstName, "", lastName,
-                    scoreNum, grade, line);
+                allSects[line - 1].insertNoText(newPID, firstName, "", 
+                    lastName, scoreNum, grade, line);
                 stud++;
             }
             // Retrieves GOHOKIES at the end of each section
@@ -705,11 +712,11 @@ public class Coursemanager2 {
         }
         // Allocates the variables that make up the student so they don't have
         // to be reinitialized every loop
-        String firstName = new String();
-        String middleName = new String();
-        String lastName = new String();
+        String firstName;
+        String middleName;
+        String lastName;
         long perID;
-        String PID = new String();
+        String newPID;
         // Retrieves the first line, "VTSTUDENTS"
         byte[] dLimit1 = new byte[10];
         studDataFile.readFully(dLimit1);
@@ -719,7 +726,7 @@ public class Coursemanager2 {
         while (line < numStudents) {
             // Retrieves the PID as a long and casts it to a string
             perID = studDataFile.readLong();
-            PID = Long.toString(perID);
+            newPID = Long.toString(perID);
 
             // Creates a byte array to hold exactly 1 character at a time
             // As the max length is specified, we could grab 16 characters at
@@ -768,7 +775,8 @@ public class Coursemanager2 {
             studDataFile.readFully(dLimit2);
 
             // Inserts the newly created student into StudentManager
-            studManager.insert(PID, firstName, middleName, lastName);
+            studManager.insert(newPID, firstName, middleName,
+                lastName);
 
             line++;
         }
@@ -874,6 +882,6 @@ public class Coursemanager2 {
         gradeNames[8] = "d+";
         gradeNames[9] = "d ";
         gradeNames[10] = "d-";
-        gradeNames[11] = "f";
+        gradeNames[11] = "f ";
     }
 }
