@@ -124,12 +124,12 @@ public class Coursemanager2 {
                     if (fileExt.equals(".csv")) {
                         System.out.println(lineSpl[1] + " successfully loaded");
                         parseStudentText(lineSpl[1]);
-                        
+
                     }
                     if (fileExt.equals("data")) {
                         System.out.println(lineSpl[1] + " successfully loaded");
                         parseStudentBin(lineSpl[1]);
-                        
+
                     }
                     isStudData = true;
                     break;
@@ -142,14 +142,14 @@ public class Coursemanager2 {
                             .length() - 4)
                             + " Course has been successfully loaded.");
                         parseCourseText(lineSpl[1]);
-                        
+
                     }
                     else if (fileExt.equals("data") && isStudData) {
                         System.out.println(lineSpl[1].substring(0, lineSpl[1]
                             .length() - 5)
                             + " Course has been successfully loaded.");
                         parseCourseBin(lineSpl[1]);
-                        
+
                     }
                     else {
                         System.out.println(
@@ -195,17 +195,19 @@ public class Coursemanager2 {
                     if (ident == 0) {
                         Student tgt = studManager.searchStu(perID);
                         if (tgt.getSection() == 0) {
-                        currStud = allSects[currSect].insert(perID, fName,
-                            mName, lName, score, grade, currSect + 1);
-                        studManager.updateSection(perID, currSect + 1);
-                        isStud = true;
+                            currStud = allSects[currSect].insert(perID, fName,
+                                mName, lName, score, grade, currSect + 1);
+                            studManager.updateSection(perID, currSect + 1);
+                            isStud = true;
                         }
-                        else if (tgt.getSection() == currSect + 1){
-                            System.out.println(fName + " " + lName + " is already "
-                                + "in section " + (currSect + 1));
+                        else if (tgt.getSection() == currSect + 1) {
+                            System.out.println(fName + " " + lName
+                                + " is already " + "in section " + (currSect
+                                    + 1));
                         }
                         else {
-                            System.out.println(fName + " " + lName + " is already "
+                            System.out.println(fName + " " + lName
+                                + " is already "
                                 + "registered in a different section");
                         }
                     }
@@ -330,7 +332,8 @@ public class Coursemanager2 {
                         remPID = allSects[currSect].remove(lineSpl[1]);
                     }
                     else if (lineSpl.length == 3) {
-                        remPID = allSects[currSect].remove(lineSpl[1], lineSpl[2]);
+                        remPID = allSects[currSect].remove(lineSpl[1],
+                            lineSpl[2]);
                     }
                     if (remPID != null) {
                         studManager.updateSection(remPID, -1);
@@ -345,17 +348,14 @@ public class Coursemanager2 {
                 case stat: {
                     // Holds the grade totals of the students
                     int[] result = allSects[currSect].stat();
-                    System.out.println("Statistics of section " + 
-                        Integer.toString(currSect + 1)
-                        + ":");
+                    System.out.println("Statistics of section " + Integer
+                        .toString(currSect + 1) + ":");
                     // iterator through result
                     int j = 0;
                     while (j < result.length) {
                         if (result[j] > 0) {
-                            System.out.println(Integer.toString(
-                                result[j])
-                                + " students with grade "
-                                + gradeNames[j]);
+                            System.out.println(Integer.toString(result[j])
+                                + " students with grade " + gradeNames[j]);
                         }
                         j++;
                     }
@@ -370,7 +370,11 @@ public class Coursemanager2 {
                     break;
                 }
                 case clearsection: {
+
                     allSects[currSect].clearSection();
+                    if (studManager.getNumStud() != 0) {
+                        studManager.clearSec(currSect + 1);
+                    }
                     System.out.println("Section " + currSect + " cleared");
                     break;
                 }
@@ -418,12 +422,14 @@ public class Coursemanager2 {
                 }
                 case savestudentdata: {
                     saveStudBin(lineSpl[1]);
-                    System.out.println("Saved all Students data to " + lineSpl[1]);
+                    System.out.println("Saved all Students data to "
+                        + lineSpl[1]);
                     break;
                 }
                 case savecoursedata: {
                     saveCourseBin(lineSpl[1]);
-                    System.out.println("Saved all course data to " + lineSpl[1]);
+                    System.out.println("Saved all course data to "
+                        + lineSpl[1]);
                     break;
                 }
                 case clearcoursedata: {
@@ -437,8 +443,8 @@ public class Coursemanager2 {
                 default:
                     break;
             }
-            if (!cmd.equals("insert") && !cmd.equals("search")
-                    && !cmd.equals("searchid")) {
+            if (!cmd.equals("insert") && !cmd.equals("search") && !cmd.equals(
+                "searchid")) {
                 isStud = false;
             }
         }
@@ -550,9 +556,9 @@ public class Coursemanager2 {
         for (int j = 0; j < allStudents.length; j++) {
             Student curr = allStudents[j];
             if (curr != null && curr.getSection() > 0) {
-                allSects[currSect].insertNoText(curr.getID(), curr.getFirstName(),
-                    curr.getMiddleName(), curr.getLastName(), curr.getScore(),
-                    curr.getGrade(), curr.getSection());
+                allSects[currSect].insertNoText(curr.getID(), curr
+                    .getFirstName(), curr.getMiddleName(), curr.getLastName(),
+                    curr.getScore(), curr.getGrade(), curr.getSection());
             }
         }
     }
@@ -671,15 +677,13 @@ public class Coursemanager2 {
                 else if (ident == 1) {
                     System.out.println("Warning: Student " + firstName + " "
                         + lastName + " is not loaded to section " + Integer
-                            .toString(line)
-                        + " since he/she doesn't exist in "
+                            .toString(line) + " since he/she doesn't exist in "
                         + "the loaded student records.");
                 }
                 else if (ident == 2) {
                     System.out.println("Warning: Student " + firstName + " "
                         + lastName + " is not loaded to section " + Integer
-                            .toString(line)
-                        + " since the corresponding pid "
+                            .toString(line) + " since the corresponding pid "
                         + "belongs to another student.");
                 }
                 stud++;
@@ -733,17 +737,27 @@ public class Coursemanager2 {
                     + " ID belongs to another student");
             }
             else {
-                tempStudent = allSects[sectionID - 1].searchId(split[1]);
-                if (tempStudent != null) {
+
+                tempStudent = studManager.searchStu(split[1]);// allSects[sectionID
+                                                              // -
+                                                              // 1].searchId(split[1]);
+                if (tempStudent.getSection() == sectionID) {
                     tempStudent.setGrade(split[5]);
                     tempStudent.setScore(score);
                     studManager.updateScore(split[1], score);
                 }
-                else {
+                else if (tempStudent.getSection() <= 0) {
                     allSects[sectionID - 1].insertNoText(split[1], split[2], "",
                         split[3], score, split[5], sectionID);
                     studManager.updateSection(split[1], sectionID);
                     studManager.updateScore(split[1], score);
+                }
+                else {
+                    System.out.println("Warning: Student " + split[2] + " "
+                        + split[3] + " is not loaded to section " + Integer
+                            .toString(sectionID)
+                        + " since he/she is already enrolled " + "in section "
+                        + Integer.toString(tempStudent.getSection()));
                 }
             }
         }
