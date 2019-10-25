@@ -253,6 +253,8 @@ public class Section {
                 .getLast() + " get removed from section " + secNum);
             numStud--;
             remPID = pid;
+            studArray[currId].setScore(0);
+            studArray[currId].setGrade("f ");
         }
         return remPID;
     }
@@ -510,7 +512,7 @@ public class Section {
     public Student[] list(String grade) {
         int listSize = 0;
         Student[] graded = new Student[size];
-        if (grade.substring(1).equalsIgnoreCase(" ")) {
+        if (grade.substring(1, 2).equalsIgnoreCase(" ")) {
             for (int i = 0; i < size; i++) {
                 if (studArray[i].getSection() != -1 && studArray[i].getGrade()
                     .equalsIgnoreCase(grade)) {
@@ -519,7 +521,7 @@ public class Section {
                 }
             }
         }
-        else if (grade.substring(1).equalsIgnoreCase("*")) {
+        else if (grade.substring(1, 2).equalsIgnoreCase("*")) {
             for (int i = 0; i < size; i++) {
                 if (studArray[i].getSection() != -1 && studArray[i].getGrade()
                     .substring(0, 1).equalsIgnoreCase(grade.substring(0, 1))) {
