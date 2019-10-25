@@ -162,9 +162,9 @@ public class BinarySearchTreeTest extends TestCase {
      * Tests the makeCopy method
      */
     public void testMakeCopy() {
-        bSTree.insert("3", 3);
-        bSTree.insert("2", 2);
-        bSTree.insert("4", 4);
+        bSTree.insert("b", 3);
+        bSTree.insert("a", 2);
+        bSTree.insert("c", 4);
         Integer[] copies = new Integer[10];
         bSTree.makeCopy(copies);
         assertNull(copies[3]);

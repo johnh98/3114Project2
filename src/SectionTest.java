@@ -250,8 +250,8 @@ public class SectionTest extends TestCase {
         // Shows that the previous grade command updated student grades (except
         // for 14, who is tombstoned and therefore is not updated)
         assertTrue(tester.searchId("t14").getGrade().equals("f"));
-        assertTrue(tester.searchId("t12").getGrade().equals("A "));
-        assertTrue(tester.searchId("t2").getGrade().equals("D-"));
+        assertTrue(tester.searchId("t12").getGrade().equals("a "));
+        assertTrue(tester.searchId("t2").getGrade().equals("d-"));
     }
 
 
@@ -307,14 +307,14 @@ public class SectionTest extends TestCase {
         tester.grade();
 
         // Tests for single letter grades
-        Student[] list = tester.list("B");
+        Student[] list = tester.list("b ");
         assertNull(list[3]);
         assertTrue(list[0].getID().equals("t4"));
         assertTrue(list[1].getID().equals("t5"));
         assertTrue(list[2].getID().equals("t9"));
 
         // Tests for Grade* grades (where all grades with +,-," " are desired)
-        list = tester.list("B*");
+        list = tester.list("b*");
 
         assertNull(list[8]);
         assertTrue(list[0].getID().equals("t4"));
@@ -325,7 +325,7 @@ public class SectionTest extends TestCase {
         assertTrue(list[7].getID().equals("t12"));
 
         // Tests for +/- grades
-        list = tester.list("B+");
+        list = tester.list("b+");
 
         assertNull(list[5]);
         assertTrue(list[1].getID().equals("t8"));

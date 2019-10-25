@@ -421,40 +421,40 @@ public class Section {
                 int grade = studArray[i].getScore();
 
                 if (grade < 50) {
-                    studArray[i].setGrade("F ");
+                    studArray[i].setGrade("f ");
                 }
                 else if (grade < 53) {
-                    studArray[i].setGrade("D-");
+                    studArray[i].setGrade("d-");
                 }
                 else if (grade < 55) {
-                    studArray[i].setGrade("D ");
+                    studArray[i].setGrade("d ");
                 }
                 else if (grade < 58) {
-                    studArray[i].setGrade("D+");
+                    studArray[i].setGrade("d+");
                 }
                 else if (grade < 60) {
-                    studArray[i].setGrade("C-");
+                    studArray[i].setGrade("c-");
                 }
                 else if (grade < 65) {
-                    studArray[i].setGrade("C ");
+                    studArray[i].setGrade("c ");
                 }
                 else if (grade < 70) {
-                    studArray[i].setGrade("C+");
+                    studArray[i].setGrade("c+");
                 }
                 else if (grade < 75) {
-                    studArray[i].setGrade("B-");
+                    studArray[i].setGrade("b-");
                 }
                 else if (grade < 80) {
-                    studArray[i].setGrade("B ");
+                    studArray[i].setGrade("b ");
                 }
                 else if (grade < 85) {
-                    studArray[i].setGrade("B+");
+                    studArray[i].setGrade("b+");
                 }
                 else if (grade < 90) {
-                    studArray[i].setGrade("A-");
+                    studArray[i].setGrade("a-");
                 }
                 else if (grade <= 100) {
-                    studArray[i].setGrade("A ");
+                    studArray[i].setGrade("a ");
                 }
             }
         }
@@ -504,7 +504,7 @@ public class Section {
     public Student[] list(String grade) {
         int listSize = 0;
         Student[] graded = new Student[size];
-        if (grade.length() == 1) {
+        if (grade.substring(1).equalsIgnoreCase(" ")) {
             for (int i = 0; i < size; i++) {
                 if (studArray[i].getSection() != -1 && studArray[i].getGrade()
                     .equalsIgnoreCase(grade)) {

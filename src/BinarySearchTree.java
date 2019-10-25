@@ -12,8 +12,15 @@
  *            generic type representing the value held by the tree
  */
 public class BinarySearchTree<K extends Comparable<? super K>, V extends Comparable<? super V>> {
+    
+    /**
+     * The root node of the tree
+     */
     private KeyNode<K, V> root;
-
+    /**
+     * The count for the array copy method
+     */
+    private int copyCount = 0;
 
     // ----------------------------------------------------------
     /**
@@ -336,8 +343,8 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
      *            is the array to copy data into
      */
     public void makeCopy(V[] copyArr) {
-        int i = 0;
-        copyTraverse(copyArr, i, root);
+        copyTraverse(copyArr, root);
+        copyCount = 0;
     }
 
 
@@ -351,14 +358,14 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
      * @param rootNode
      *            is the node to center the recursion at
      */
-    private void copyTraverse(V[] copyArr, int num, KeyNode<K, V> rootNode) {
+    private void copyTraverse(V[] copyArr, KeyNode<K, V> rootNode) {
         if (rootNode.getLeft() != null) {
-            copyTraverse(copyArr, num, rootNode.getLeft());
+            copyTraverse(copyArr, rootNode.getLeft());
         }
-        copyArr[num] = rootNode.getValue();
-        num++;
+        copyArr[copyCount] = rootNode.getValue();
+        copyCount++;
         if (rootNode.getRight() != null) {
-            copyTraverse(copyArr, num, rootNode.getRight());
+            copyTraverse(copyArr, rootNode.getRight());
         }
     }
 
