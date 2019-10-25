@@ -122,12 +122,14 @@ public class Coursemanager2 {
                     String fileExt = lineSpl[1].substring(lineSpl[1].length()
                         - 4);
                     if (fileExt.equals(".csv")) {
-                        parseStudentText(lineSpl[1]);
                         System.out.println(lineSpl[1] + " successfully loaded");
+                        parseStudentText(lineSpl[1]);
+                        
                     }
                     if (fileExt.equals("data")) {
-                        parseStudentBin(lineSpl[1]);
                         System.out.println(lineSpl[1] + " successfully loaded");
+                        parseStudentBin(lineSpl[1]);
+                        
                     }
                     isStudData = true;
                     break;
@@ -136,16 +138,18 @@ public class Coursemanager2 {
                     String fileExt = lineSpl[1].substring(lineSpl[1].length()
                         - 4);
                     if (fileExt.equals(".csv") && isStudData) {
-                        parseCourseText(lineSpl[1]);
                         System.out.println(lineSpl[1].substring(0, lineSpl[1]
                             .length() - 4)
                             + " Course has been successfully loaded.");
+                        parseCourseText(lineSpl[1]);
+                        
                     }
                     else if (fileExt.equals("data") && isStudData) {
-                        parseCourseBin(lineSpl[1]);
                         System.out.println(lineSpl[1].substring(0, lineSpl[1]
                             .length() - 5)
                             + " Course has been successfully loaded.");
+                        parseCourseBin(lineSpl[1]);
+                        
                     }
                     else {
                         System.out.println(
@@ -195,6 +199,10 @@ public class Coursemanager2 {
                             mName, lName, score, grade, currSect + 1);
                         studManager.updateSection(perID, currSect + 1);
                         isStud = true;
+                        }
+                        else if (tgt.getSection() == currSect + 1){
+                            System.out.println(fName + " " + lName + " is already "
+                                + "in section " + (currSect + 1));
                         }
                         else {
                             System.out.println(fName + " " + lName + " is already "
@@ -316,11 +324,15 @@ public class Coursemanager2 {
                             "Command remove is not valid for merged sections");
                         break;
                     }
+                    String remPID = "";
                     if (lineSpl.length == 2) {
-                        allSects[currSect].remove(lineSpl[1]);
+                        remPID = allSects[currSect].remove(lineSpl[1]);
                     }
                     else if (lineSpl.length == 3) {
-                        allSects[currSect].remove(lineSpl[1], lineSpl[2]);
+                        remPID = allSects[currSect].remove(lineSpl[1], lineSpl[2]);
+                    }
+                    if (remPID != null) {
+                        studManager.updateSection(remPID, -1);
                     }
                     break;
                 }
@@ -332,16 +344,17 @@ public class Coursemanager2 {
                 case stat: {
                     // Holds the grade totals of the students
                     int[] result = allSects[currSect].stat();
-                    System.out.println("Statistics of section " + currSect
+                    System.out.println("Statistics of section " + 
+                        Integer.toString(currSect + 1)
                         + ":");
                     // iterator through result
                     int j = 0;
                     while (j < result.length) {
-                        if (result[gradeNames.length - j - 1] > 0) {
+                        if (result[j] > 0) {
                             System.out.println(Integer.toString(
-                                result[gradeNames.length - j - 1])
+                                result[j])
                                 + " students with grade "
-                                + gradeNames[gradeNames.length - j - 1]);
+                                + gradeNames[j]);
                         }
                         j++;
                     }
@@ -423,7 +436,8 @@ public class Coursemanager2 {
                 default:
                     break;
             }
-            if (!cmd.equals("insert") && !cmd.equals("search")) {
+            if (!cmd.equals("insert") && !cmd.equals("search")
+                    && !cmd.equals("searchid")) {
                 isStud = false;
             }
         }
@@ -535,7 +549,7 @@ public class Coursemanager2 {
         for (int j = 0; j < allStudents.length; j++) {
             Student curr = allStudents[j];
             if (curr != null && curr.getSection() > 0) {
-                allSects[currSect].insert(curr.getID(), curr.getFirstName(),
+                allSects[currSect].insertNoText(curr.getID(), curr.getFirstName(),
                     curr.getMiddleName(), curr.getLastName(), curr.getScore(),
                     curr.getGrade(), curr.getSection());
             }
@@ -708,7 +722,7 @@ public class Coursemanager2 {
             if (idCheck == 1) {
                 System.out.println(split[2] + " " + split[3]
                     + " insertion failed. Wrong student information."
-                    + "ID doesn't exist");
+                    + " ID doesn't exist");
             }
             else if (idCheck == 2) {
                 System.out.println(split[2] + " " + split[3]

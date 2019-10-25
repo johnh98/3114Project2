@@ -150,7 +150,7 @@ public class Section {
             size++;
             numStud++;
             // Print success and return the student
-            System.out.println(first + " " + last + " inserted");
+            System.out.println(first + " " + last + " inserted.");
             return newStu;
 
         }
@@ -233,8 +233,10 @@ public class Section {
      * 
      * @param pid
      *            the pid of the student we are removing
+     * @return the pid of the removed student
      */
-    public void remove(String pid) {
+    public String remove(String pid) {
+        String remPID = null;
         Integer currId = pidTree.find(pid);
         if (currId == null) {
             System.out.println(
@@ -250,7 +252,9 @@ public class Section {
             System.out.println("Student " + removed.getFirst() + " " + removed
                 .getLast() + " get removed from section " + secNum);
             numStud--;
+            remPID = pid;
         }
+        return remPID;
     }
 
 
@@ -262,17 +266,19 @@ public class Section {
      *            The students first name
      * @param last
      *            The students last name
+     * @return the pid of the removed student
      */
-    public void remove(String first, String last) {
-
+    public String remove(String first, String last) {
+        String pid = null;
         Student[] finds = search(first, last);
         if (finds[0] == null || finds[1] != null) {
             System.out.println("Remove failed. Student " + first + " " + last
                 + " doesn't exist in section " + secNum);
         }
         else {
-            remove(finds[0].getID());
+            pid = remove(finds[0].getID());
         }
+        return pid;
 
     }
 
