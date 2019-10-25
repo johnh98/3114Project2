@@ -637,7 +637,6 @@ public class Coursemanager2 {
                         allSects[line - 1].insertNoText(newPID, firstName, "",
                             lastName, scoreNum, grade, line);
                         studManager.updateSection(tgt.getID(), line);
-                        stud++;
                     }
                     else {
                         System.out.println("Warning: Student " + firstName + " "
@@ -662,6 +661,7 @@ public class Coursemanager2 {
                         + " since the corresponding pid "
                         + "belongs to another student.");
                 }
+                stud++;
             }
             // Retrieves GOHOKIES at the end of each section
             byte[] dLimit2 = new byte[8];
