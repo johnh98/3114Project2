@@ -578,6 +578,9 @@ public class Coursemanager2 {
                 // Retrieves the PID as a long and casts it to a string
                 perID = binCourseFile.readLong();
                 newPID = Long.toString(perID);
+                while (newPID.length() < 9) {
+                    newPID = "0" + newPID;
+                }
 
                 // Creates a byte array to hold exactly 1 character at a time
                 // As the max length is specified, we could grab 16 characters
