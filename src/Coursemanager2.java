@@ -417,27 +417,36 @@ public class Coursemanager2 {
         // Opens the file of course data
         RandomAccessFile saveCourseFile = new RandomAccessFile(fileName, "rw");
 
-        saveCourseFile.write("CS3114atVT".getBytes());
-        saveCourseFile.write(decToBin(allSects.length));
+        saveCourseFile.writeBytes("CS3114atVT");
+        
+        int sectIter = 0;
+        while (allSects[sectIter].getNumStudents() != 0) {
+            sectIter++;
+        }
+        saveCourseFile.writeInt(sectIter);
 
-        for (int i = 0; i < allSects.length; i++) {
+        for (int i = 0; i < sectIter; i++) {
             Section thisSection = allSects[i];
-            for (int j = 0; j < thisSection.getNumStudents(); j++) {
+            int studentNum = thisSection.getNumStudents();
+            saveCourseFile.writeInt(studentNum);
+            for (int j = 0; j < studentNum; j++) {
                 Student[] allStudents = thisSection.dumpCopy();
-                Student curr = allStudents[i];
-                if (curr != null) {
+                Student curr = allStudents[j];
+                //if (curr != null) {
                     long PID = Long.parseLong(curr.getID());
-                    saveCourseFile.write(longToBin(PID));
+                    saveCourseFile.writeLong(PID);
 
-                    saveCourseFile.write((curr.getFirstName() + "$")
-                        .getBytes());
-                    saveCourseFile.write((curr.getLastName() + "$").getBytes());
+                    saveCourseFile.writeBytes((curr.getFirstName() + "$"));
+                    saveCourseFile.writeBytes((curr.getLastName() + "$"));
 
-                    saveCourseFile.write(decToBin(curr.getScore()));
-                    saveCourseFile.write(curr.getGrade().getBytes());
-                }
+                    saveCourseFile.writeInt(curr.getScore());
+                    if (curr.getGrade().length() < 2) {
+                        curr.setGrade(curr.getGrade() + " ");
+                    }
+                    saveCourseFile.writeBytes(curr.getGrade());
+                //}
             }
-            saveCourseFile.write("GOHOKIES".getBytes());
+            saveCourseFile.writeBytes("GOHOKIES");
         }
         saveCourseFile.close();
     }
@@ -456,20 +465,20 @@ public class Coursemanager2 {
         RandomAccessFile saveStudFile = new RandomAccessFile(fileName, "rw");
         Student[] allStudents = studManager.copyStudents();
 
-        saveStudFile.write("VTSTUDENTS".getBytes());
-        saveStudFile.write(decToBin(allStudents.length));
+        saveStudFile.writeBytes("VTSTUDENTS");
+        saveStudFile.writeInt(allStudents.length);
 
         for (int i = 0; i < allStudents.length; i++) {
             Student curr = allStudents[i];
 
             long PID = Long.parseLong(curr.getID());
-            saveStudFile.write(longToBin(PID));
+            saveStudFile.writeLong(PID);
 
-            saveStudFile.write((curr.getFirstName() + "$").getBytes());
-            saveStudFile.write((curr.getMiddleName() + "$").getBytes());
-            saveStudFile.write((curr.getLastName() + "$").getBytes());
+            saveStudFile.writeBytes(curr.getFirstName() + "$");
+            saveStudFile.writeBytes(curr.getMiddleName() + "$");
+            saveStudFile.writeBytes(curr.getLastName() + "$");
 
-            saveStudFile.write("GOHOKIES".getBytes());
+            saveStudFile.writeBytes("GOHOKIES");
         }
         saveStudFile.close();
     }
@@ -554,7 +563,7 @@ public class Coursemanager2 {
             binCourseFile.close();
             return;
         }
-        System.out.println(binCourseFile.length());
+        //System.out.println(binCourseFile.length());
         // Allocates the variables that make up the student so they don't have
         // to be reinitialized every loop
         String firstName = new String();
@@ -587,27 +596,29 @@ public class Coursemanager2 {
                 binCourseFile.readFully(next);
                 String nextStr = new String(next, StandardCharsets.UTF_8);
                 // Sets the first name to an empty string, can be added to.
-                firstName = "";
+                firstName = nextStr;
                 // Adds each subsequent character to the name until the
                 // delimiter
                 while (!(nextStr.equals("$"))) {
-                    firstName = firstName + nextStr;
+                    
                     binCourseFile.readFully(next);
                     nextStr = new String(next, StandardCharsets.UTF_8);
+                    firstName = firstName + nextStr;
                 }
-                firstName = firstName.toLowerCase();
+                firstName = firstName.substring(0, firstName.length() - 1).toLowerCase();
 
                 // As above, repeated for last name
                 next = new byte[1];
                 binCourseFile.readFully(next);
                 nextStr = new String(next, StandardCharsets.UTF_8);
-                lastName = "";
+                lastName = nextStr;
                 while (!(nextStr.equals("$"))) {
-                    lastName = lastName + nextStr;
+                    
                     binCourseFile.readFully(next);
                     nextStr = new String(next, StandardCharsets.UTF_8);
+                    lastName = lastName + nextStr;
                 }
-                lastName = lastName.toLowerCase();
+                lastName = lastName.substring(0, lastName.length() - 1).toLowerCase();
 
                 scoreNum = binCourseFile.readInt();
 
@@ -651,7 +662,7 @@ public class Coursemanager2 {
         while (cFile.hasNextLine()) {
             String cLine = cFile.nextLine();
             // Removes the whitespace and makes an array of substrings
-            String[] split = cLine.trim().split(",\\s+");
+            String[] split = cLine.trim().split(",");
             for (int i = 0; i < split.length; i++) {
                 split[i] = split[i].toLowerCase();
             }

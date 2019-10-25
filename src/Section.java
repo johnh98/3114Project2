@@ -310,13 +310,19 @@ public class Section {
      * @return the array of new Students based on this Sections internal array
      */
     public Student[] dumpCopy() {
-        Student[] copy = new Student[numStud];
-        for (int i = 0; i < numStud; i++) {
+        int tot = numStud;
+        int pos = 0;
+        Student[] copy = new Student[tot];
+        for (int i = 0; i < tot; i++) {
             if (studArray[i].getSection() != -1) {
-                copy[i] = new Student(studArray[i].getID(), studArray[i]
+                copy[pos] = new Student(studArray[i].getID(), studArray[i]
                     .getFirstName(), studArray[i].getMiddleName(), studArray[i]
                         .getLastName(), studArray[i].getScore(), studArray[i]
                             .getGrade());
+                pos++;
+            }
+            else {
+                tot++;
             }
         }
         return copy;
@@ -350,13 +356,13 @@ public class Section {
                 int grade = studArray[i].getScore();
 
                 if (grade < 50) {
-                    studArray[i].setGrade("F");
+                    studArray[i].setGrade("F ");
                 }
                 else if (grade < 53) {
                     studArray[i].setGrade("D-");
                 }
                 else if (grade < 55) {
-                    studArray[i].setGrade("D");
+                    studArray[i].setGrade("D ");
                 }
                 else if (grade < 58) {
                     studArray[i].setGrade("D+");
@@ -365,7 +371,7 @@ public class Section {
                     studArray[i].setGrade("C-");
                 }
                 else if (grade < 65) {
-                    studArray[i].setGrade("C");
+                    studArray[i].setGrade("C ");
                 }
                 else if (grade < 70) {
                     studArray[i].setGrade("C+");
@@ -374,7 +380,7 @@ public class Section {
                     studArray[i].setGrade("B-");
                 }
                 else if (grade < 80) {
-                    studArray[i].setGrade("B");
+                    studArray[i].setGrade("B ");
                 }
                 else if (grade < 85) {
                     studArray[i].setGrade("B+");
@@ -383,7 +389,7 @@ public class Section {
                     studArray[i].setGrade("A-");
                 }
                 else if (grade <= 100) {
-                    studArray[i].setGrade("A");
+                    studArray[i].setGrade("A ");
                 }
             }
         }
