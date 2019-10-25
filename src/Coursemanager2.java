@@ -336,7 +336,10 @@ public class Coursemanager2 {
                             lineSpl[2]);
                     }
                     if (remPID != null) {
-                        studManager.updateSection(remPID, -1);
+                        Student tgt = studManager.searchStu(remPID);
+                        tgt.setSection(-1);
+                        tgt.setScore(0);
+                        tgt.setGrade("f ");
                     }
                     break;
                 }
