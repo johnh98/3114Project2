@@ -53,7 +53,7 @@ public class Section {
      * This method resizes the student array in cases where a merge would result
      * in out of bounds
      * 
-     * @param size
+     * @param mergeSize
      *            the combined size of all component sections
      */
     public void setUpMerge(int mergeSize) {

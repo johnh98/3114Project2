@@ -353,7 +353,8 @@ public class SectionTest extends TestCase {
         String pairs = tester.findPair(1);
         // String to be compared to
         String comp =
-            "a c, e g\ne g, a e\ne g, a e\na e, e g\na e, a e\ne g, a e\nfound 6 pairs\n";
+            "a c, e g\ne g, a e\ne g, a e\na e, "
+            + "e g\na e, a e\ne g, a e\nfound 6 pairs\n";
         // Compares strings to show that findpair generates correct string
         assertTrue(pairs.equals(comp));
     }

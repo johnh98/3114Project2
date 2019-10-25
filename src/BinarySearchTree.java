@@ -11,8 +11,9 @@
  * @param <V>
  *            generic type representing the value held by the tree
  */
-public class BinarySearchTree<K extends Comparable<? super K>, V extends Comparable<? super V>> {
-    
+public class BinarySearchTree<K extends Comparable<? super K>,
+    V extends Comparable<? super V>> {
+
     /**
      * The root node of the tree
      */
@@ -21,6 +22,7 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
      * The count for the array copy method
      */
     private int copyCount = 0;
+
 
     // ----------------------------------------------------------
     /**
@@ -353,8 +355,6 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
      * 
      * @param copyArr
      *            is the array to place the data in
-     * @param num
-     *            is the current index to place at
      * @param rootNode
      *            is the node to center the recursion at
      */

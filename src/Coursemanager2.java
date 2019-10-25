@@ -149,7 +149,8 @@ public class Coursemanager2 {
                     }
                     else {
                         System.out.println(
-                            "Course Load Failed. You have to load Student Information file first.");
+                            "Course Load Failed. You have to load Student "
+                                + "Information file first.");
                     }
                     break;
                 }
@@ -190,11 +191,12 @@ public class Coursemanager2 {
                     if (ident == 0) {
                         currStud = allSects[currSect].insert(perID, fName,
                             mName, lName, score, grade, currSect + 1);
+                        studManager.updateSection(perID, currSect + 1);
                         isStud = true;
                     }
                     else if (ident == 1) {
                         System.out.println(fName + " " + lName
-                            + " insertion failed. Wrong student information. " 
+                            + " insertion failed. Wrong student information. "
                             + "ID doesn't exist");
                     }
                     else if (ident == 2) {
@@ -207,15 +209,13 @@ public class Coursemanager2 {
                 case searchid: {
                     // Prevents the command being run on a merged section
                     if (allSects[currSect].isMerged()) {
-                        System.out.println(
-                            "Command searchid is not " 
+                        System.out.println("Command searchid is not "
                             + "valid for merged sections");
                         break;
                     }
                     Student result = allSects[currSect].searchId(lineSpl[1]);
                     if (result == null) {
-                        System.out.println(
-                            "Search Failed. Couldn't find any " 
+                        System.out.println("Search Failed. Couldn't find any "
                             + "student with id " + lineSpl[1]);
                         isStud = false;
                     }
@@ -390,8 +390,8 @@ public class Coursemanager2 {
                 case merge: {
                     if (allSects[currSect].getNumStudents() != 0) {
                         System.out.println(
-                            "Sections could only be merged to an  empty section. section "
-                                + Integer.toString(currSect + 1)
+                            "Sections could only be merged to an empty section."
+                                + " section " + Integer.toString(currSect + 1)
                                 + " is not empty");
                     }
                     else {
@@ -564,7 +564,7 @@ public class Coursemanager2 {
         long perID;
         String newPID;
         int scoreNum;
-        String grade = new String();
+        String grade;
         // Retrieves the first line, "CS3114atVT"
         byte[] dLimit1 = new byte[10];
         binCourseFile.readFully(dLimit1);
@@ -623,9 +623,42 @@ public class Coursemanager2 {
                     StandardCharsets.UTF_8);
                 grade = gradeStr;
 
-                allSects[line - 1].insertNoText(newPID, firstName, "", 
-                    lastName, scoreNum, grade, line);
-                stud++;
+                int ident = studManager.checkIdentity(newPID, firstName,
+                    lastName);
+                if (ident == 0) {
+                    Student tgt = studManager.searchStu(newPID);
+                    if (tgt.getSection() == line) {
+                        allSects[line - 1].updateStudentScore(newPID, scoreNum);
+                    }
+                    else if (tgt.getSection() == 0) {
+                        allSects[line - 1].insertNoText(newPID, firstName, "",
+                            lastName, scoreNum, grade, line);
+                        studManager.updateSection(tgt.getID(), line);
+                        stud++;
+                    }
+                    else {
+                        System.out.println("Warning: Student " + firstName + " "
+                            + lastName + " is not loaded to section " + Integer
+                                .toString(line)
+                            + " since he/she is already enrolled "
+                            + "in section " + Integer.toString(tgt
+                                .getSection()));
+                    }
+                }
+                else if (ident == 1) {
+                    System.out.println("Warning: Student " + firstName + " "
+                        + lastName + " is not loaded to section " + Integer
+                            .toString(line)
+                        + " since he/she doesn't exist in "
+                        + "the loaded student records.");
+                }
+                else if (ident == 2) {
+                    System.out.println("Warning: Student " + firstName + " "
+                        + lastName + " is not loaded to section " + Integer
+                            .toString(line)
+                        + " since the corresponding pid "
+                        + "belongs to another student.");
+                }
             }
             // Retrieves GOHOKIES at the end of each section
             byte[] dLimit2 = new byte[8];
@@ -667,11 +700,13 @@ public class Coursemanager2 {
                 split[3]);
             if (idCheck == 1) {
                 System.out.println(split[2] + " " + split[3]
-                    + " insertion failed. Wrong student information. ID doesn't exist");
+                    + " insertion failed. Wrong student information."
+                    + "ID doesn't exist");
             }
             else if (idCheck == 2) {
                 System.out.println(split[2] + " " + split[3]
-                    + " insertion failed. Wrong student information. ID belongs to another student");
+                    + " insertion failed. Wrong student information."
+                    + " ID belongs to another student");
             }
             else {
                 tempStudent = allSects[sectionID - 1].searchId(split[1]);
@@ -683,6 +718,7 @@ public class Coursemanager2 {
                 else {
                     allSects[sectionID - 1].insertNoText(split[1], split[2], "",
                         split[3], score, split[5], sectionID);
+                    studManager.updateSection(split[1], sectionID);
                 }
             }
         }
@@ -775,8 +811,7 @@ public class Coursemanager2 {
             studDataFile.readFully(dLimit2);
 
             // Inserts the newly created student into StudentManager
-            studManager.insert(newPID, firstName, middleName,
-                lastName);
+            studManager.insert(newPID, firstName, middleName, lastName);
 
             line++;
         }

@@ -89,7 +89,7 @@ public class Student implements ClassMember {
     /**
      * Sets the students grade to a given value
      * 
-     * @param grade
+     * @param newGrade
      *            is the new grade for the student
      */
     public void setScore(int newGrade) {

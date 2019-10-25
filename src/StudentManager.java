@@ -19,7 +19,7 @@ public class StudentManager {
     /**
      * Holds the number of total students being managed
      */
-    int numStudents;
+    private int numStudents;
 
 
     /**
