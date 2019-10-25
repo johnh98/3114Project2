@@ -139,13 +139,13 @@ public class Coursemanager2 {
                         parseCourseText(lineSpl[1]);
                         System.out.println(lineSpl[1].substring(0, lineSpl[1]
                             .length() - 4)
-                            + " Course has been successfully loaded");
+                            + " Course has been successfully loaded.");
                     }
                     else if (fileExt.equals("data") && isStudData) {
                         parseCourseBin(lineSpl[1]);
                         System.out.println(lineSpl[1].substring(0, lineSpl[1]
                             .length() - 5)
-                            + " Course has been successfully loaded");
+                            + " Course has been successfully loaded.");
                     }
                     else {
                         System.out.println(
@@ -189,20 +189,27 @@ public class Coursemanager2 {
                     }
                     int ident = studManager.checkIdentity(perID, fName, lName);
                     if (ident == 0) {
+                        Student tgt = studManager.searchStu(perID);
+                        if (tgt.getSection() == 0) {
                         currStud = allSects[currSect].insert(perID, fName,
                             mName, lName, score, grade, currSect + 1);
                         studManager.updateSection(perID, currSect + 1);
                         isStud = true;
+                        }
+                        else {
+                            System.out.println(fName + " " + lName + " is already "
+                                + "registered in a different section");
+                        }
                     }
                     else if (ident == 1) {
                         System.out.println(fName + " " + lName
                             + " insertion failed. Wrong student information. "
-                            + "ID doesn't exist");
+                            + " ID doesn't exist");
                     }
                     else if (ident == 2) {
                         System.out.println(fName + " " + lName
                             + " insertion failed. Wrong student information. "
-                            + "ID belongs to another student");
+                            + " ID belongs to another student");
                     }
                     break;
                 }
@@ -318,12 +325,6 @@ public class Coursemanager2 {
                     break;
                 }
                 case grade: {
-                    // Prevents the command being run on a merged section
-                    if (allSects[currSect].isMerged()) {
-                        System.out.println(
-                            "Command grade is not valid for merged sections");
-                        break;
-                    }
                     allSects[currSect].grade();
                     System.out.println("grading completed");
                     break;
@@ -403,10 +404,12 @@ public class Coursemanager2 {
                 }
                 case savestudentdata: {
                     saveStudBin(lineSpl[1]);
+                    System.out.println("Saved all Students data to " + lineSpl[1]);
                     break;
                 }
                 case savecoursedata: {
                     saveCourseBin(lineSpl[1]);
+                    System.out.println("Saved all course data to " + lineSpl[1]);
                     break;
                 }
                 case clearcoursedata: {
@@ -414,6 +417,7 @@ public class Coursemanager2 {
                     for (int i = 0; i < allSects.length; i++) {
                         allSects[i].clearSection();
                     }
+                    System.out.println("All course data cleared.");
                     break;
                 }
                 default:
