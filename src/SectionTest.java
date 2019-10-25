@@ -55,6 +55,7 @@ public class SectionTest extends TestCase {
      * Tests the searchID method
      */
     public void testSearchID() {
+
         // Inserts two new students
         Student s1 = tester.insert("t1", "a", "b", "c", 12, "f", 0);
         Student s2 = tester.insert("t2", "e", "f", "g", 13, "f", 0);
@@ -75,6 +76,10 @@ public class SectionTest extends TestCase {
      * Tests the two methods that search names
      */
     public void testSearchNames() {
+        tester.insert("t", "first", "mid", "last", 12, "grade", 0);
+        tester.remove("t");
+        assertNull(tester.search("t1")[0]);
+        assertNull(tester.search("a", "lName")[0]);
         // Sets us up by inserting students
         tester.insert("t1", "a", "b", "c", 12, "f", 0);
         tester.insert("t2", "e", "f", "g", 13, "f", 0);
@@ -196,8 +201,8 @@ public class SectionTest extends TestCase {
         tester.dumpSection();
 
         // Insert students
-        tester.insert("t1", "a", "b", "c", 12, "f", 0);
         tester.insert("t2", "e", "f", "g", 13, "f", 0);
+        tester.insert("t1", "a", "b", "c", 12, "f", 0);
         tester.insert("t3", "a", "d", "e", 14, "f", 0);
         tester.insert("t4", "e", "d", "g", 15, "f", 0);
         tester.insert("t5", "a", "d", "a", 16, "f", 0);
@@ -212,6 +217,9 @@ public class SectionTest extends TestCase {
      * Tests the grade and stat methods
      */
     public void testStatGrade() {
+        tester.insert("t", "first", "mid", "last", 12, "grade", 0);
+        tester.remove("t");
+        assertEquals(0, tester.stat()[0]);
         // Insert a student at all grade level
         tester.insert("t1", "a", "b", "c", 49, "f", 0);
         tester.insert("t2", "e", "f", "g", 50, "f", 0);
@@ -227,6 +235,7 @@ public class SectionTest extends TestCase {
         tester.insert("t12", "a", "d", "a", 90, "f", 0);
         tester.insert("t13", "a", "d", "a", 100, "f", 0);
         tester.insert("t14", "a", "d", "a", 100, "f", -1);
+        tester.insert("t15", "a", "d", "a", 101, "q", 0);
 
         // Grade the students
         tester.grade();
@@ -252,6 +261,7 @@ public class SectionTest extends TestCase {
         assertTrue(tester.searchId("t14").getGrade().equals("f"));
         assertTrue(tester.searchId("t12").getGrade().equals("a "));
         assertTrue(tester.searchId("t2").getGrade().equals("d-"));
+        assertTrue(tester.searchId("t15").getGrade().equals("q"));
     }
 
 
@@ -358,4 +368,28 @@ public class SectionTest extends TestCase {
         // Compares strings to show that findpair generates correct string
         assertTrue(pairs.equals(comp));
     }
+    
+    /**
+     * Tests the dumpCopy method
+     */
+    public void testDumpCopy() {
+        tester.insert("t1", "a", "b", "c", 12, "f", 0);
+        tester.insert("t2", "e", "f", "g", 13, "f", 0);
+        tester.insert("t3", "a", "d", "e", 14, "f", 0);
+        tester.insert("t4", "e", "d", "g", 15, "f", 0);
+        tester.insert("t5", "a", "d", "a", 30, "f", 0);
+        tester.insert("t6", "a", "b", "c", 40, "f", 0);
+        tester.insert("t7", "e", "f", "g", 13, "f", 0);
+        tester.insert("t8", "a", "d", "e", 14, "f", 0);
+        tester.remove("t7");
+        
+        Student[] tested = tester.dumpCopy();
+        
+        assertEquals(tested.length, 7);
+        assertTrue(tested[0].getID().equals("t1"));
+        assertTrue(tested[6].getID().equals("t8"));
+        
+        
+    }
+    
 }
