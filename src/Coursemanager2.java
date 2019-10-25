@@ -205,7 +205,7 @@ public class Coursemanager2 {
                                 + " is already " + "in section " + (currSect
                                     + 1));
                         }
-                        else {
+                        else if (tgt.getSection() != currSect + 1){
                             System.out.println(fName + " " + lName
                                 + " is already "
                                 + "registered in a different section");
@@ -336,10 +336,8 @@ public class Coursemanager2 {
                             lineSpl[2]);
                     }
                     if (remPID != null) {
-                        Student tgt = studManager.searchStu(remPID);
-                        tgt.setSection(-1);
-                        tgt.setScore(0);
-                        tgt.setGrade("f ");
+                        studManager.updateSection(remPID, -1);
+                        studManager.updateScore(remPID, 0);
                     }
                     break;
                 }
