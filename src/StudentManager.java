@@ -33,6 +33,16 @@ public class StudentManager {
 
 
     /**
+     * Returns the number of students in the student manager
+     * 
+     * @return the number of students in the student manager
+     */
+    public int getNumStud() {
+        return numStudents;
+    }
+
+
+    /**
      * This method inserts into the student manager class
      * 
      * @param pid

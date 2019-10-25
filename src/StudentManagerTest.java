@@ -68,6 +68,7 @@ public class StudentManagerTest extends TestCase {
             exception = e;
         }
         assertNotNull(exception);
+        assertEquals(tester.getNumStud(), 2);
     }
 
 
