@@ -16,6 +16,9 @@ public class StudentManagerTest extends TestCase {
     private StudentManager tester;
 
 
+    /**
+     * Sets up for the tests methods
+     */
     public void setUp() {
         tester = new StudentManager();
     }

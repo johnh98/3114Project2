@@ -30,6 +30,8 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
      *
      * @param x
      *            the item to insert.
+     * @param y
+     *            the value of the item we are inserting
      */
     public void insert(K x, V y) {
         root = insert(x, y, root);
@@ -42,6 +44,8 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
      * 
      * @param x
      *            the item to remove.
+     * @param y
+     *            the value of the item we are removing
      */
     public void remove(K x, V y) {
         root = remove(x, y, root);
@@ -74,6 +78,8 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
      *
      * @param x
      *            the item to search for.
+     * @param y
+     *            the value of the item we are searching for
      * @return the matching item or null if not found.
      */
     public V find(K x, V y) {
@@ -323,8 +329,11 @@ public class BinarySearchTree<K extends Comparable<? super K>, V extends Compara
 
 
     /**
-     * Uses copyTraverse() to allow a user class to create a copy without node access
-     * @param copyArr is the array to copy data into
+     * Uses copyTraverse() to allow a user class to create a copy without node
+     * access
+     * 
+     * @param copyArr
+     *            is the array to copy data into
      */
     public void makeCopy(V[] copyArr) {
         int i = 0;

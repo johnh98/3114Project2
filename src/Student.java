@@ -20,15 +20,20 @@ public class Student implements ClassMember {
 
 
     /**
-     * Creates a new Student with a given name and ID but no grades
+     * creates a new student object
      * 
+     * @param pid
+     *            students pid
      * @param fName
-     *            is the student's first name
+     *            students first name
+     * @param midName
+     *            students middle name
      * @param lName
-     *            is the student's last name
-     * @param newID
-     *            is the ID number, with 2 digits indicating section
-     *            and the following 4 representing the order this was created in
+     *            students last name
+     * @param score
+     *            students score
+     * @param letterGrade
+     *            students grade
      */
     public Student(
         String pid,
@@ -63,6 +68,7 @@ public class Student implements ClassMember {
      * Sets the student's section
      * 
      * @param sec
+     *            the section we are setting it to
      */
     public void setSection(int sec) {
         section = sec;
@@ -86,8 +92,8 @@ public class Student implements ClassMember {
      * @param grade
      *            is the new grade for the student
      */
-    public void setScore(int grade) {
-        totGrade = grade;
+    public void setScore(int newGrade) {
+        totGrade = newGrade;
     }
 
 
@@ -105,7 +111,7 @@ public class Student implements ClassMember {
     /**
      * Sets the students grade to a given value
      * 
-     * @param grade
+     * @param letterGrade
      *            is the new grade for the student
      */
     public void setGrade(String letterGrade) {
@@ -142,9 +148,11 @@ public class Student implements ClassMember {
     public String getFirstName() {
         return firstName;
     }
-    
+
+
     /**
      * Returns the student's middle name
+     * 
      * @return the middle name of this student as a string
      */
     public String getMiddleName() {
