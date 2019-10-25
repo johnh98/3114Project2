@@ -46,7 +46,7 @@ public class StudentManager {
      */
     public void insert(String pid, String first, String mid, String last) {
 
-        Student newStu = new Student(pid, first, mid, last, 0, "F");
+        Student newStu = new Student(pid, first, mid, last, 0, "f ");
         students.insert(pid, newStu);
         numStudents++;
     }
@@ -81,40 +81,40 @@ public class StudentManager {
             updated.setScore(score);
 
             if (score < 50) {
-                updated.setGrade("F ");
+                updated.setGrade("f ");
             }
             else if (score < 53) {
-                updated.setGrade("D-");
+                updated.setGrade("d-");
             }
             else if (score < 55) {
-                updated.setGrade("D ");
+                updated.setGrade("d ");
             }
             else if (score < 58) {
-                updated.setGrade("D+");
+                updated.setGrade("d+");
             }
             else if (score < 60) {
-                updated.setGrade("C-");
+                updated.setGrade("c-");
             }
             else if (score < 65) {
-                updated.setGrade("C ");
+                updated.setGrade("c ");
             }
             else if (score < 70) {
-                updated.setGrade("C+");
+                updated.setGrade("c+");
             }
             else if (score < 75) {
-                updated.setGrade("B-");
+                updated.setGrade("b-");
             }
             else if (score < 80) {
-                updated.setGrade("B ");
+                updated.setGrade("b ");
             }
             else if (score < 85) {
-                updated.setGrade("B+");
+                updated.setGrade("b+");
             }
             else if (score < 90) {
-                updated.setGrade("A-");
+                updated.setGrade("a-");
             }
             else if (score <= 100) {
-                updated.setGrade("A ");
+                updated.setGrade("a ");
             }
         }
 

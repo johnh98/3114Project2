@@ -98,13 +98,13 @@ public class StudentManagerTest extends TestCase {
         tester.insert("t1", "a", "b", "b");
         Student found = tester.searchStu("t1");
         assertEquals(found.getScore(), 0);
-        assertTrue(found.getGrade().equals("F"));
+        assertTrue(found.getGrade().equals("f "));
         assertEquals(found.getSection(), 0);
 
         tester.updateScore("t1", 75);
         tester.updateSection("t1", 3);
         assertEquals(found.getSection(), 3);
-        assertTrue(found.getGrade().equals("B"));
+        assertTrue(found.getGrade().equals("b "));
         assertEquals(found.getScore(), 75);
     }
 
