@@ -207,6 +207,14 @@ public class StudentManager {
 
 
     /**
+     * Resets all student sections to 0 so they can be enrolled again
+     */
+    public void resetStuMan() {
+        resetStuMan(students.getRoot());
+    }
+
+
+    /**
      * Recurses through the student manager and tombstones all students in a
      * section
      * 
@@ -227,6 +235,27 @@ public class StudentManager {
         // Checks the right node/subtree and travels down it if it exists
         if (node.getRight() != null) {
             this.clearSectionData(node.getRight(), sec);
+        }
+    }
+
+
+    /**
+     * Recurses through the student manager and sets all students
+     * enrollment to 0 so it can be redone
+     * 
+     * @param node
+     *            the node we are currently looking at
+     */
+    private void resetStuMan(KeyNode<String, Student> node) {
+        // If the left node/subtree exists, we check that out
+        if (node.getLeft() != null) {
+            this.resetStuMan(node.getLeft());
+        }
+        // prints the student held at the index held in the node
+        node.getValue().setSection(0);
+        // Checks the right node/subtree and travels down it if it exists
+        if (node.getRight() != null) {
+            this.resetStuMan(node.getRight());
         }
     }
 }

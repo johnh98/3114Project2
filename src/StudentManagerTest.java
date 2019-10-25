@@ -139,7 +139,7 @@ public class StudentManagerTest extends TestCase {
 
 
     /**
-     * Tests the clearSec method
+     * Tests the clearSec method and resetStuMan method
      */
     public void testRemoveSec() {
         tester.insert("t2", "a", "b", "c");
@@ -155,6 +155,14 @@ public class StudentManagerTest extends TestCase {
         assertEquals(-1, tester.searchStu("t3").getSection());
         assertEquals(-1, tester.searchStu("t1").getSection());
         assertEquals(1, tester.searchStu("t4").getSection());
+
+        tester.resetStuMan();
+
+        assertEquals(0, tester.searchStu("t2").getSection());
+        assertEquals(0, tester.searchStu("t3").getSection());
+        assertEquals(0, tester.searchStu("t1").getSection());
+        assertEquals(0, tester.searchStu("t4").getSection());
+
     }
 
 }
