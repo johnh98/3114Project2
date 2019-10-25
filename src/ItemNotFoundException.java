@@ -21,14 +21,4 @@ public class ItemNotFoundException extends RuntimeException {
         super();
     }
 
-
-    /**
-     * The exception with a custom message to display in case of an error
-     * 
-     * @param message
-     *            the error message.
-     */
-    public ItemNotFoundException(String message) {
-        super(message);
-    }
 }

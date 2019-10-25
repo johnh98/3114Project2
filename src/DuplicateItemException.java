@@ -20,15 +20,4 @@ public class DuplicateItemException extends RuntimeException {
         super();
     }
 
-
-    /**
-     * An exception with a custom message to inform the user
-     * 
-     * @param message
-     *            the error message (Likely what item was duplicated,
-     *            possibly its position or data)
-     */
-    public DuplicateItemException(String message) {
-        super(message);
-    }
 }
