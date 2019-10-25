@@ -184,4 +184,39 @@ public class StudentManager {
         return found;
     }
 
+
+    /**
+     * Tombstones all students from a section in the student manager
+     * 
+     * @param sec
+     *            the section we want gone
+     */
+    public void clearSec(int sec) {
+        clearSectionData(students.getRoot(), sec);
+    }
+
+
+    /**
+     * Recurses through the student manager and tombstones all students in a
+     * section
+     * 
+     * @param node
+     *            the node we are currently looking at
+     * @param sec
+     *            the section we are removing
+     */
+    private void clearSectionData(KeyNode<String, Student> node, int sec) {
+        // If the left node/subtree exists, we check that out
+        if (node.getLeft() != null) {
+            this.clearSectionData(node.getLeft(), sec);
+        }
+        // prints the student held at the index held in the node
+        if (node.getValue().getSection() == sec) {
+            node.getValue().setSection(-1);
+        }
+        // Checks the right node/subtree and travels down it if it exists
+        if (node.getRight() != null) {
+            this.clearSectionData(node.getRight(), sec);
+        }
+    }
 }

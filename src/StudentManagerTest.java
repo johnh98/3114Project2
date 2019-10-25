@@ -136,4 +136,24 @@ public class StudentManagerTest extends TestCase {
 
     }
 
+
+    /**
+     * Tests the clearSec method
+     */
+    public void testRemoveSec() {
+        tester.insert("t2", "a", "b", "c");
+        tester.insert("t1", "a", "b", "c");
+        tester.insert("t3", "a", "b", "c");
+        tester.insert("t4", "a", "b", "c");
+
+        tester.searchStu("t4").setSection(1);
+
+        tester.clearSec(0);
+
+        assertEquals(-1, tester.searchStu("t2").getSection());
+        assertEquals(-1, tester.searchStu("t3").getSection());
+        assertEquals(-1, tester.searchStu("t1").getSection());
+        assertEquals(1, tester.searchStu("t4").getSection());
+    }
+
 }
