@@ -212,12 +212,12 @@ public class Coursemanager2 {
                     else if (ident == 1) {
                         System.out.println(fName + " " + lName
                             + " insertion failed. Wrong student information. "
-                            + " ID doesn't exist");
+                            + "ID doesn't exist");
                     }
                     else if (ident == 2) {
                         System.out.println(fName + " " + lName
                             + " insertion failed. Wrong student information. "
-                            + " ID belongs to another student");
+                            + "ID belongs to another student");
                     }
                     break;
                 }
@@ -307,6 +307,7 @@ public class Coursemanager2 {
                         allSects[currSect].updateStudentScore(currStud.getID(),
                             newScore);
                         currStud.setScore(newScore);
+                        studManager.updateScore(currStud.getID(), newScore);
                         System.out.println("Update " + currStud.getFirstName()
                             + " " + currStud.getLastName() + " record, score = "
                             + lineSpl[1]);
@@ -650,11 +651,13 @@ public class Coursemanager2 {
                     Student tgt = studManager.searchStu(newPID);
                     if (tgt.getSection() == line) {
                         allSects[line - 1].updateStudentScore(newPID, scoreNum);
+                        studManager.updateScore(newPID, scoreNum);
                     }
                     else if (tgt.getSection() == 0) {
                         allSects[line - 1].insertNoText(newPID, firstName, "",
                             lastName, scoreNum, grade, line);
                         studManager.updateSection(tgt.getID(), line);
+                        studManager.updateScore(newPID, scoreNum);
                     }
                     else {
                         System.out.println("Warning: Student " + firstName + " "
@@ -740,6 +743,7 @@ public class Coursemanager2 {
                     allSects[sectionID - 1].insertNoText(split[1], split[2], "",
                         split[3], score, split[5], sectionID);
                     studManager.updateSection(split[1], sectionID);
+                    studManager.updateScore(split[1], score);
                 }
             }
         }
