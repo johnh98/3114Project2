@@ -123,9 +123,11 @@ public class Coursemanager2 {
                         - 4);
                     if (fileExt.equals(".csv")) {
                         parseStudentText(lineSpl[1]);
+                        System.out.println(lineSpl[1] + " successfully loaded");
                     }
                     if (fileExt.equals("data")) {
                         parseStudentBin(lineSpl[1]);
+                        System.out.println(lineSpl[1] + " successfully loaded");
                     }
                     isStudData = true;
                     break;
@@ -135,12 +137,15 @@ public class Coursemanager2 {
                         - 4);
                     if (fileExt.equals(".csv") && isStudData) {
                         parseCourseText(lineSpl[1]);
+                        System.out.println("CS3114 Course has been successfully loaded");
                     }
                     else if (fileExt.equals("data") && isStudData) {
                         parseCourseBin(lineSpl[1]);
+                        System.out.println("CS3114 Course has been successfully loaded");
                     }
                     else {
-                        System.out.println("No valid student data loaded");
+                        System.out.println(
+                            "Course Load Failed. You have to load Student Information file first.");
                     }
                     break;
                 }
@@ -177,9 +182,20 @@ public class Coursemanager2 {
                         grade = lineSpl[lineSpl.length - 1];
                         score = Integer.parseInt(lineSpl[lineSpl.length - 2]);
                     }
-                    currStud = allSects[currSect].insert(perID, fName, mName,
-                        lName, score, grade, currSect + 1);
-                    isStud = true;
+                    int ident = studManager.checkIdentity(perID, fName, lName);
+                    if (ident == 0) {
+                        currStud = allSects[currSect].insert(perID, fName,
+                            mName, lName, score, grade, currSect + 1);
+                        isStud = true;
+                    }
+                    else if (ident == 1) {
+                        System.out.println(fName + " " + lName
+                            + " insertion failed. Wrong student information. ID doesn't exist");
+                    }
+                    else if (ident == 2) {
+                        System.out.println(fName + " " + lName
+                            + " insertion failed. Wrong student information. ID belongs to another student");
+                    }
                     break;
                 }
                 case searchid: {
@@ -418,7 +434,7 @@ public class Coursemanager2 {
         RandomAccessFile saveCourseFile = new RandomAccessFile(fileName, "rw");
 
         saveCourseFile.writeBytes("CS3114atVT");
-        
+
         int sectIter = 0;
         while (allSects[sectIter].getNumStudents() != 0) {
             sectIter++;
@@ -432,19 +448,19 @@ public class Coursemanager2 {
             for (int j = 0; j < studentNum; j++) {
                 Student[] allStudents = thisSection.dumpCopy();
                 Student curr = allStudents[j];
-                //if (curr != null) {
-                    long PID = Long.parseLong(curr.getID());
-                    saveCourseFile.writeLong(PID);
+                // if (curr != null) {
+                long PID = Long.parseLong(curr.getID());
+                saveCourseFile.writeLong(PID);
 
-                    saveCourseFile.writeBytes((curr.getFirstName() + "$"));
-                    saveCourseFile.writeBytes((curr.getLastName() + "$"));
+                saveCourseFile.writeBytes((curr.getFirstName() + "$"));
+                saveCourseFile.writeBytes((curr.getLastName() + "$"));
 
-                    saveCourseFile.writeInt(curr.getScore());
-                    if (curr.getGrade().length() < 2) {
-                        curr.setGrade(curr.getGrade() + " ");
-                    }
-                    saveCourseFile.writeBytes(curr.getGrade());
-                //}
+                saveCourseFile.writeInt(curr.getScore());
+                if (curr.getGrade().length() < 2) {
+                    curr.setGrade(curr.getGrade() + " ");
+                }
+                saveCourseFile.writeBytes(curr.getGrade());
+                // }
             }
             saveCourseFile.writeBytes("GOHOKIES");
         }
@@ -481,36 +497,6 @@ public class Coursemanager2 {
             saveStudFile.writeBytes("GOHOKIES");
         }
         saveStudFile.close();
-    }
-
-
-    /**
-     * Creates an array of bytes from an integer value to write to a .data file
-     * Uses bit manipulation to get the binary representations of each of the
-     * four bytes in order
-     * 
-     * @param n
-     *            is the number to break down.
-     * @return the final byte array.
-     */
-    private static byte[] decToBin(int n) {
-        return new byte[] { (byte)(n >>> 24), (byte)(n >>> 16), (byte)(n >>> 8),
-            (byte)n };
-    }
-
-
-    /**
-     * Creates an array of bytes from a long value to write to a .data file
-     * Uses bit manipulation like decToBin() but with 8 bytes
-     * 
-     * @param n
-     *            is the number to break down.
-     * @return the final byte array.
-     */
-    private static byte[] longToBin(long n) {
-        return new byte[] { (byte)(n >>> 64), (byte)(n >>> 48),
-            (byte)(n >>> 40), (byte)(n >>> 32), (byte)(n >>> 24),
-            (byte)(n >>> 16), (byte)(n >>> 8), (byte)n };
     }
 
 
@@ -563,7 +549,7 @@ public class Coursemanager2 {
             binCourseFile.close();
             return;
         }
-        //System.out.println(binCourseFile.length());
+        // System.out.println(binCourseFile.length());
         // Allocates the variables that make up the student so they don't have
         // to be reinitialized every loop
         String firstName = new String();
@@ -600,12 +586,13 @@ public class Coursemanager2 {
                 // Adds each subsequent character to the name until the
                 // delimiter
                 while (!(nextStr.equals("$"))) {
-                    
+
                     binCourseFile.readFully(next);
                     nextStr = new String(next, StandardCharsets.UTF_8);
                     firstName = firstName + nextStr;
                 }
-                firstName = firstName.substring(0, firstName.length() - 1).toLowerCase();
+                firstName = firstName.substring(0, firstName.length() - 1)
+                    .toLowerCase();
 
                 // As above, repeated for last name
                 next = new byte[1];
@@ -613,12 +600,13 @@ public class Coursemanager2 {
                 nextStr = new String(next, StandardCharsets.UTF_8);
                 lastName = nextStr;
                 while (!(nextStr.equals("$"))) {
-                    
+
                     binCourseFile.readFully(next);
                     nextStr = new String(next, StandardCharsets.UTF_8);
                     lastName = lastName + nextStr;
                 }
-                lastName = lastName.substring(0, lastName.length() - 1).toLowerCase();
+                lastName = lastName.substring(0, lastName.length() - 1)
+                    .toLowerCase();
 
                 scoreNum = binCourseFile.readInt();
 
@@ -628,7 +616,7 @@ public class Coursemanager2 {
                     StandardCharsets.UTF_8);
                 grade = gradeStr;
 
-                allSects[line - 1].insert(PID, firstName, "", lastName,
+                allSects[line - 1].insertNoText(PID, firstName, "", lastName,
                     scoreNum, grade, line);
                 stud++;
             }
@@ -686,7 +674,7 @@ public class Coursemanager2 {
                     studManager.updateScore(split[1], score);
                 }
                 else {
-                    allSects[sectionID - 1].insert(split[1], split[2], "",
+                    allSects[sectionID - 1].insertNoText(split[1], split[2], "",
                         split[3], score, split[5], sectionID);
                 }
             }

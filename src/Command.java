@@ -3,29 +3,94 @@
  * An enumerated type to define the commands for the switch in Coursemanager2
  * 
  * @author John Hoskinson<johnh98>
- *         Version 10.22.19
+ * @version 10.22.19
  */
 public enum Command {
+
+    /**
+     * command for loadstudentdata
+     */
     loadstudentdata,
+    /**
+     * command for loadcoursedata
+     */
     loadcoursedata,
+    /**
+     * command for section
+     */
     section,
+    /**
+     * command for insert
+     */
     insert,
+    /**
+     * command for searchid
+     */
     searchid,
+    /**
+     * command for search
+     */
     search,
+    /**
+     * command for score
+     */
     score,
+    /**
+     * command for remove
+     */
     remove,
+    /**
+     * command for grade
+     */
     grade,
+    /**
+     * command for stat
+     */
     stat,
+    /**
+     * command for dumpsection
+     */
     dumpsection,
+    /**
+     * command for clearsection
+     */
     clearsection,
+    /**
+     * command for list
+     */
     list,
+    /**
+     * command for findpair
+     */
     findpair,
+    /**
+     * command for merge
+     */
     merge,
+    /**
+     * command for savestudentdata
+     */
     savestudentdata,
+    /**
+     * command for savecoursedata
+     */
     savecoursedata,
+    /**
+     * command for clearcoursedata
+     */
     clearcoursedata,
+    /**
+     * command for no command
+     */
     none;
 
+    /**
+     * Takes a string and returns a command enum
+     * 
+     * @param cmdName
+     *            the commands name as a string
+     * @return the command enum that matches
+     */
     public static Command setCommand(String cmdName) {
         Command cmd;
         if (cmdName.equals("loadstudentdata")) {

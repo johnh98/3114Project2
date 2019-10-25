@@ -16,7 +16,9 @@ public class StudentManager {
      */
     private BinarySearchTree<String, Student> students;
 
-    // Holds the number of total students being managed
+    /**
+     * Holds the number of total students being managed
+     */
     int numStudents;
 
 
@@ -75,17 +77,17 @@ public class StudentManager {
     public void updateScore(String pid, int score) {
 
         Student updated = students.find(pid);
-        if (!(updated == null)) {
+        if (updated != null) {
             updated.setScore(score);
 
             if (score < 50) {
-                updated.setGrade("F");
+                updated.setGrade("F ");
             }
             else if (score < 53) {
                 updated.setGrade("D-");
             }
             else if (score < 55) {
-                updated.setGrade("D");
+                updated.setGrade("D ");
             }
             else if (score < 58) {
                 updated.setGrade("D+");
@@ -94,7 +96,7 @@ public class StudentManager {
                 updated.setGrade("C-");
             }
             else if (score < 65) {
-                updated.setGrade("C");
+                updated.setGrade("C ");
             }
             else if (score < 70) {
                 updated.setGrade("C+");
@@ -103,7 +105,7 @@ public class StudentManager {
                 updated.setGrade("B-");
             }
             else if (score < 80) {
-                updated.setGrade("B");
+                updated.setGrade("B ");
             }
             else if (score < 85) {
                 updated.setGrade("B+");
@@ -112,7 +114,7 @@ public class StudentManager {
                 updated.setGrade("A-");
             }
             else if (score <= 100) {
-                updated.setGrade("A");
+                updated.setGrade("A ");
             }
         }
 
@@ -129,7 +131,7 @@ public class StudentManager {
      */
     public void updateSection(String pid, int section) {
         Student updated = students.find(pid);
-        if (!(updated == null)) {
+        if (updated != null) {
             updated.setSection(section);
         }
     }

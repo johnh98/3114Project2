@@ -34,7 +34,7 @@ public class SectionTest extends TestCase {
         assertEquals(1, tester.getNumStudents());
 
         // Inserts a new student and shows that the sizes updates
-        Student s2 = tester.insert("t2", "first", "mid", "last", 100, "a", 0);
+        tester.insert("t2", "first", "mid", "last", 100, "a", 0);
         assertEquals(2, tester.getSize());
         assertEquals(2, tester.getNumStudents());
 
@@ -44,6 +44,9 @@ public class SectionTest extends TestCase {
         assertEquals(2, tester.getSize());
         assertEquals(2, tester.getNumStudents());
         assertTrue(s1.equals(s3));
+
+        tester.insertNoText("t3", "first", "mid", "last", 16, "grade", 0);
+        tester.insertNoText("t3", "first", "mid", "last", 16, "grade", 0);
 
     }
 
@@ -200,6 +203,7 @@ public class SectionTest extends TestCase {
         tester.insert("t5", "a", "d", "a", 16, "f", 0);
         // Full dumpsection
         tester.dumpSection();
+        assertEquals(5, tester.getSize());
 
     }
 

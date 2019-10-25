@@ -56,9 +56,9 @@ public class Section {
      * @param size
      *            the combined size of all component sections
      */
-    public void setUpMerge(int size) {
+    public void setUpMerge(int mergeSize) {
         if (merged) {
-            studArray = new Student[size];
+            studArray = new Student[mergeSize];
         }
     }
 
@@ -66,6 +66,9 @@ public class Section {
     /**
      * Switches the sections merged tag so it can be treated like a merged
      * section
+     * 
+     * @param mergeState
+     *            Whether the section is merged or not
      */
     public void setMerge(boolean mergeState) {
         merged = mergeState;
@@ -164,6 +167,68 @@ public class Section {
 
 
     /**
+     * Inserts a student into the section but doesn't print any messages
+     * 
+     * @param pid
+     *            the students pid
+     * @param first
+     *            the students first name
+     * @param mid
+     *            the students middle name
+     * @param last
+     *            the students last name
+     * @param score
+     *            the students current score
+     * @param grade
+     *            the students grade
+     * @param sec
+     *            the section the student is in
+     * @return the student we just inserted or the student that was already in
+     *         the section
+     */
+    public Student insertNoText(
+        String pid,
+        String first,
+        String mid,
+        String last,
+        int score,
+        String grade,
+        int sec) {
+
+        /*
+         * Search the PID tree to see if the student is already in the section
+         */
+        Integer currInd = pidTree.find(pid);
+        /*
+         * If the student isn't in the section then add it in
+         */
+        if (currInd == null) {
+            // Create the student and update its section
+            Student newStu = new Student(pid, first, mid, last, score, grade);
+            newStu.setSection(sec);
+            // insert into the array and trees
+            studArray[size] = newStu;
+            pidTree.insert(pid, size);
+            NameGroup currName = new NameGroup(first, last);
+            nameTree.insert(currName, size);
+            scoreTree.insert(score, size);
+            size++;
+            numStud++;
+            // Print success and return the student
+            return newStu;
+
+        }
+        /*
+         * Otherwise just return the actual student
+         */
+        else {
+            return studArray[currInd];
+        }
+
+    }
+
+
+    /**
      * Removes a student from a section based on their pid
      * 
      * @param pid
@@ -201,7 +266,7 @@ public class Section {
     public void remove(String first, String last) {
 
         Student[] finds = search(first, last);
-        if (finds[0] == null || !(finds[1] == null)) {
+        if (finds[0] == null || finds[1] != null) {
             System.out.println("Remove failed. Student " + first + " " + last
                 + " doesn't exist in section " + secNum);
         }
@@ -406,7 +471,7 @@ public class Section {
      */
     public void updateStudentScore(String pid, Integer score) {
         Integer currId = pidTree.find(pid);
-        if (!(currId == null)) {
+        if (currId != null) {
             Integer oldScore = studArray[currId].getScore();
             studArray[currId].setScore(score);
             scoreTree.remove(oldScore, currId);

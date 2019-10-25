@@ -157,5 +157,20 @@ public class BinarySearchTreeTest extends TestCase {
         assertTrue(strE.equals(none));
         assertTrue(strF.equals(full));
     }
+    
+    /**
+     * Tests the makeCopy method
+     */
+    public void testMakeCopy() {
+        bSTree.insert("3", 3);
+        bSTree.insert("2", 2);
+        bSTree.insert("4", 4);
+        Integer[] copies = new Integer[10];
+        bSTree.makeCopy(copies);
+        assertNull(copies[3]);
+        int copied = copies[1];
+        assertEquals(3, copied);
+        
+    }
 
 }

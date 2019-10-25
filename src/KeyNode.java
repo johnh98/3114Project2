@@ -50,7 +50,7 @@ public class KeyNode<K, V> {
     /**
      * Get the current value of the key in this node
      * 
-     * @return
+     * @return the key of the node
      */
     public K getKey() {
         return key;
