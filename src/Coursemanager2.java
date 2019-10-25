@@ -194,7 +194,7 @@ public class Coursemanager2 {
                     int ident = studManager.checkIdentity(perID, fName, lName);
                     if (ident == 0) {
                         Student tgt = studManager.searchStu(perID);
-                        if (tgt.getSection() == 0) {
+                        if (tgt.getSection() <= 0) {
                             currStud = allSects[currSect].insert(perID, fName,
                                 mName, lName, score, grade, currSect + 1);
                             studManager.updateSection(perID, currSect + 1);
@@ -384,7 +384,11 @@ public class Coursemanager2 {
                 case list: {
                     System.out.println("Students with grade " + lineSpl[1]
                         + " are:");
-                    Student[] listed = allSects[currSect].list(lineSpl[1]);
+                    String testGrade = lineSpl[1];
+                    if (testGrade.length() == 1) {
+                        testGrade = testGrade + " ";
+                    }
+                    Student[] listed = allSects[currSect].list(testGrade);
                     int listCount = 0;
                     if (listed.length == 0) {
                         System.out.println("Found 0 students");
@@ -663,7 +667,7 @@ public class Coursemanager2 {
                         allSects[line - 1].updateStudentScore(newPID, scoreNum);
                         studManager.updateScore(newPID, scoreNum);
                     }
-                    else if (tgt.getSection() == 0) {
+                    else if (tgt.getSection() <= 0) {
                         allSects[line - 1].insertNoText(newPID, firstName, "",
                             lastName, scoreNum, grade, line);
                         studManager.updateSection(tgt.getID(), line);
@@ -715,7 +719,6 @@ public class Coursemanager2 {
         // memory
         int score;
         int sectionID;
-        Student tempStudent;
         File courseFile = new File(fileName);
         // Scanner that parses the commands
         Scanner cFile = new Scanner(courseFile);
@@ -746,10 +749,9 @@ public class Coursemanager2 {
             }
             else {
 
-                tempStudent = studManager.searchStu(newID);
+                Student tempStudent = studManager.searchStu(newID);
                 if (tempStudent.getSection() == sectionID) {
-                    tempStudent.setGrade(split[5]);
-                    tempStudent.setScore(score);
+                    allSects[sectionID - 1].updateStudentScore(newID, score);
                     studManager.updateScore(newID, score);
                 }
                 else if (tempStudent.getSection() <= 0) {
