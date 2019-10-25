@@ -55,8 +55,7 @@ public class BinarySearchTreeTest extends TestCase {
             exception = e;
         }
         assertNull(exception);
-        
-        
+
     }
 
 
@@ -150,14 +149,16 @@ public class BinarySearchTreeTest extends TestCase {
         String none = "";
         String full = "0\n1\n2\n";
         String strE = bSTree.toString();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 1; i < 3; i++) {
             bSTree.insert("Test " + i, i);
         }
+        bSTree.insert("Test 0", 0);
         String strF = bSTree.toString();
         assertTrue(strE.equals(none));
         assertTrue(strF.equals(full));
     }
-    
+
+
     /**
      * Tests the makeCopy method
      */
@@ -170,7 +171,7 @@ public class BinarySearchTreeTest extends TestCase {
         assertNull(copies[3]);
         int copied = copies[1];
         assertEquals(3, copied);
-        
+
     }
 
 }
