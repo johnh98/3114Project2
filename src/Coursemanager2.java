@@ -377,7 +377,8 @@ public class Coursemanager2 {
                     if (studManager.getNumStud() != 0) {
                         studManager.clearSec(currSect + 1);
                     }
-                    System.out.println("Section " + currSect + " cleared");
+                    System.out.println("Section " + (currSect + 1)
+                        + " cleared");
                     break;
                 }
                 case list: {
@@ -394,7 +395,12 @@ public class Coursemanager2 {
                         break;
                     }
                     while (listed[listCount] != null) {
-                        System.out.println(listed[listCount].toString());
+                        System.out.println(listed[listCount].getID() + ", "
+                            + listed[listCount].getFirstName() + " "
+                            + listed[listCount].getLastName() + ", score = "
+                            + listed[listCount].getScore() + ", grade = "
+                            + listed[listCount].getGrade());
+                        //System.out.println(listed[listCount].toString());
                         listCount++;
                     }
                     System.out.println("Found " + listCount + " students");
