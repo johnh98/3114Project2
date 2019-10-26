@@ -400,7 +400,7 @@ public class Coursemanager2 {
                             + listed[listCount].getLastName() + ", score = "
                             + listed[listCount].getScore() + ", grade = "
                             + listed[listCount].getGrade());
-                        //System.out.println(listed[listCount].toString());
+                        // System.out.println(listed[listCount].toString());
                         listCount++;
                     }
                     System.out.println("Found " + listCount + " students");
