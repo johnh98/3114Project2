@@ -174,7 +174,7 @@ public class Coursemanager2 {
                     String mName = "";
                     String lName = "";
                     String perID = "";
-                    String grade = "F";
+                    String grade = "f ";
                     int score = 0;
                     if (lineSpl.length % 2 != 0) {
                         fName = lineSpl[2];
@@ -198,6 +198,7 @@ public class Coursemanager2 {
                             currStud = allSects[currSect].insert(perID, fName,
                                 mName, lName, score, grade, currSect + 1);
                             studManager.updateSection(perID, currSect + 1);
+                            studManager.updateScore(perID, score);
                             isStud = true;
                         }
                         else if (tgt.getSection() == currSect + 1) {
@@ -205,7 +206,7 @@ public class Coursemanager2 {
                                 + " is already " + "in section " + (currSect
                                     + 1));
                         }
-                        else if (tgt.getSection() != currSect + 1){
+                        else if (tgt.getSection() != currSect + 1) {
                             System.out.println(fName + " " + lName
                                 + " is already "
                                 + "registered in a different section");
@@ -732,7 +733,6 @@ public class Coursemanager2 {
             String newID = split[1];
             while (newID.length() < 9) {
                 newID = "0" + newID;
-                System.out.println(newID);
             }
             int idCheck = studManager.checkIdentity(newID, split[2], split[3]);
             if (idCheck == 1) {

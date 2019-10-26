@@ -170,8 +170,8 @@ public class StudentManager {
             return 1;
         }
         // If it does but the names don't match, print 2
-        else if (!(matcher.getFirstName().equals(first) && matcher.getLastName()
-            .equals(last))) {
+        else if (!(matcher.getFirstName().equalsIgnoreCase(first) && matcher
+            .getLastName().equalsIgnoreCase(last))) {
             return 2;
         }
         // If it checks out, print 0
