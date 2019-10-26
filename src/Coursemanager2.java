@@ -441,7 +441,7 @@ public class Coursemanager2 {
                 case clearcoursedata: {
                     saveCourseBin("courseDataBackupJHSH.data");
                     for (int i = 0; i < allSects.length; i++) {
-                        allSects[i].clearSection();
+                        allSects[i] = new Section(i + 1);
                     }
                     studManager.resetStuMan();
                     System.out.println("All course data cleared.");

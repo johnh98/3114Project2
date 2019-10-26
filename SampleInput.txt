@@ -83,7 +83,7 @@ merge
 grade
 stat
 
-savestudentsdata mystudents.data
+savestudentdata mystudents.data
 savecoursedata cs3114course.data
 
 clearcoursedata
